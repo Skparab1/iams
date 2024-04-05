@@ -1,0 +1,276 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Finlandica', sans-serif;
+}
+
+
+@font-face {
+  font-family: "GlacierIndifference";
+  src: url(fonts/GlacialIndifference-Regular.otf);
+}
+
+
+body {
+  margin: 0;
+  margin-top: 45px;
+  margin-bottom: 100px;
+  background: var(--bg);
+  background-attachment: fixed;
+  touch-action: none;
+  transition: background-color 0.25s;
+}
+
+:root {
+  --bg: white;
+  --contrast: black;
+  --slight: rgb(220,220,220);
+  --main: #0d6efd;
+  --bgslight: rgba(255,255,255,0.6);
+  --br: 0px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.fullwidth{
+  width: 100%;
+  text-align: center;
+}
+
+.halfwidth {
+  width: 49%;
+  float: left;
+}
+
+nav {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  width: 100%;
+  background-color: rgb(36, 35, 35);
+  z-index: 1000;
+}
+
+.nav-items{
+  margin: 0;
+  padding: 0;
+}
+
+.navleft {
+  position: fixed;
+  float: left;
+}
+
+.navcenter {
+  text-align: center; 
+  width: 100%;
+}
+
+.navright {
+  position: fixed; 
+  right: 0%;
+  top: 0%;
+}
+
+.nav-items li {
+  display: inline-block;
+}
+
+
+.larget {
+  padding: 0.5rem;
+  margin: 0.5rem;
+  display: block;
+  background-color: rgb(71, 71, 71);
+  border-radius: 5px;
+  color: white;
+  transition: background-color 0.25s;
+  cursor: pointer;
+}
+
+.larget:hover {
+  background-color: #0d6efd;
+}
+
+
+.smallbtn {
+  padding: 0.5rem;
+  margin: 0.5rem;
+  display: block;
+  background-color: rgb(71, 71, 71);
+  border: 3px solid black;
+  border-radius: 5px;
+  color: white;
+  transition: background-color 0.25s;
+  cursor: pointer;
+}
+
+.smallbtn:hover {
+  background-color: #0d6efd;
+}
+
+
+
+.logo{
+  padding: 5px;
+  margin: 0px;
+  margin-right: 5px;
+  margin-top: 3.5px;
+  height: 42px;
+  border-radius: 10px;
+  transition: background-color 0.25s; 
+  cursor:pointer
+}
+
+
+.logo:hover{
+  background-color: #0d6efd;
+}
+
+
+.headername{
+  color:white;
+  font-family: GlacierIndifference;
+  font-size: 25px;
+  padding: 0.63rem;
+}
+
+td {
+  font-family: GlacierIndifference;
+  /* border: 0.75px solid black; */
+  margin: 0px;
+}
+
+table {
+  width: 70%;
+  margin: 15%;
+  margin-top: 100px;
+  border: 1px solid black;
+
+  overflow-y: scroll;
+}
+
+th {
+  font-weight: bold;  
+}
+
+
+.plotgraph {
+  margin: 5%;
+  width: 70%;
+  aspect-ratio: 1/1;
+  border-bottom: 5px solid black;
+  cursor: crosshair;
+  border-left: 5px solid black;
+}
+
+.point {
+  position: absolute;
+  background-color: var(--main);
+  width: 1.2%;
+  aspect-ratio: 1/1;
+  border-radius: 100%;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.25s;
+}
+
+.tickY {
+  position: absolute;
+  width: 2%;
+  height: 1%;
+  background-color: black;
+  transform: translate(-50%, -50%);
+}
+
+.tickX {
+  position: absolute;
+  width: 2%;
+  height: 1%;
+  background-color: black;
+  transform: rotate(90deg) translate(-25%, 200%);
+}
+
+.tickLabel {
+  position: absolute;
+  color: black;
+  font-weight: bold;
+}
+
+
+
+.slidecontainer {
+  width: 70%;
+  margin: 0px;
+
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 15px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: var(--main); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: var(--main); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.tablerow {
+  border: 0px;
+}
+
+.tablerow:hover {
+  background-color: var(--main);
+}
+
+tr {
+  transition: background-color 0.5s;
+}
+
+}
+
+
+.controlPanel {
+  position: fixed;
+  overflow: hidden;
+  top: 90%;
+  bottom: 0px;
+  left: 10%;
+  right: 60%;
+  z-index: 15;
+  background-color: var(--bgslight);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border: 4px solid var(--main);
+  border-bottom: 0px white;
+}
+
+.leftarrow {
+  width: 50%;
+  float: left;
+  height: 100%;
+  background-color: black;
+}
+
