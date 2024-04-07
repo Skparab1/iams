@@ -18,6 +18,7 @@ body {
   background-attachment: fixed;
   touch-action: none;
   transition: background-color 0.25s;
+  overflow-x: hidden;
 }
 
 :root {
@@ -34,12 +35,12 @@ button {
 }
 
 .fullwidth{
-  width: 100%;
+  width: 150%;
   text-align: center;
 }
 
 .halfwidth {
-  width: 49%;
+  width: 33%;
   float: left;
 }
 
@@ -163,16 +164,17 @@ th {
   border-bottom: 5px solid black;
   cursor: crosshair;
   border-left: 5px solid black;
+  transform: rotate(0.00001deg);
 }
 
 .point {
   position: absolute;
   background-color: var(--main);
-  width: 1.2%;
+  width: 2.8%;
   aspect-ratio: 1/1;
   border-radius: 100%;
   transform: translate(-50%, -50%);
-  transition: background-color 0.25s;
+  transition: background-color 0.25s left 10s top 10s;
 }
 
 .tickY {
@@ -257,8 +259,8 @@ tr {
   overflow: hidden;
   top: 90%;
   bottom: 0px;
-  left: 10%;
-  right: 60%;
+  left: 15%;
+  right: 65%;
   z-index: 15;
   background-color: var(--bgslight);
   border-top-left-radius: 25px;
@@ -274,3 +276,11 @@ tr {
   background-color: black;
 }
 
+
+.horizontalHistogramPlot {
+  margin: 5%;
+  width: 70%;
+  aspect-ratio: 1/1;
+  border-left: 5px solid black;
+  transform: rotate(0.00001deg);
+}

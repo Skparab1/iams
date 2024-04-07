@@ -12,6 +12,11 @@
     <link rel="icon" type="image/x-icon" href="pacman-favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
+
+  <script
+  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+  </script> 
+
   <body>
 
     <nav id="nav1">
@@ -29,13 +34,12 @@
       </ul>
     </nav>
 
-    <div class="controlPanel" style="position: fixed;">
-      <div class="leftarrow"></div>
+    <div class="controlPanel" style="position: fixed;" onclick="nextAction();">
+      Next
     </div>
-
     <div class=fullwidth>
 
-      <div class=halfwidth>
+      <div class=halfwidth id="leftdisplay" style="padding-left: 20px;">
         <h1>Point Table</h1>
         <table id="xytable" style="display: block; overflow: auto; margin-top: 0px; padding: 2%; width: fit-content; overflow-x: hidden;">
           <tr>
@@ -51,8 +55,11 @@
 
       <div class=halfwidth>
         <h1>Point graph</h1>
-        <div class='plotgraph' id="plotgraph"></div>
+        <div class='plotgraph' id="plotgraph">
+        </div>
       </div>
+
+      <div class=halfwidth id="rightdisplay"></div>
 
 <!--       <div class=halfwidth style="width: 10%;">
         <div class="slidecontainer" style="margin-top: 60%;">
