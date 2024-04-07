@@ -56,12 +56,48 @@ function getcoordadded(percentX, percentY) {
   return [x,y];
 }
 
-function getcoordsecond(percentX, percentY) {
+function getcoordsecond(id) {
 
-  let x = percentX/100*plotgraph.offsetWidth+1.5-(reshist.offsetLeft-plotgraph.offsetLeft);
-  let y = (1-(percentY/100))*plotgraph.offsetHeight+1.5;
+  // let oldx = percentX/100*plotgraph.offsetWidth+1.5-(reshist.offsetLeft-plotgraph.offsetLeft);
+  // let oldy = (1-(percentY/100))*plotgraph.offsetHeight+1.5;
 
-  return [x,y];
+  // // now recalculate
+
+  // let x = - (reshist.offsetLeft - plotgraph.offsetLeft) + plotgraph.offsetWidth/2 - oldx;
+  // let y = plotgraph.offsetHeight/2 - oldy;
+
+  // let z = Math.sqrt(x*x+y*y);
+
+  // let a = 180/Math.PI*Math.atan(x/y);
+  // let tiltAngle = (Math.atan(bestFitSlope / 1)*180/Math.PI);
+  // let b = (180 - tiltAngle - a);
+
+  // let y1 = z * Math.cos(b*Math.PI/180);
+  // let x1 = z * Math.sin(b*Math.PI/180);
+
+  // let finalx = oldx - x + x1;
+  // let finaly = oldy + y + y1;
+
+  // var element = document.getElementById('myElement');
+  // var topPos = element.getBoundingClientRect().top + window.scrollY;
+  // var leftPos = element.getBoundingClientRect().left + window.scrollX;
+
+  // actual point by absolute absolute
+
+  var element = document.getElementById(id);
+  var topPos = element.getBoundingClientRect().top + window.scrollY;
+  var leftPos = element.getBoundingClientRect().left + window.scrollX;
+
+  let x = -(leftPos - histplot.offsetLeft);
+  let y = topPos - histplot.offsetTop;
+
+  // reflect
+  x += (-(histplot.offsetLeft-plotgraph.offsetLeft)-x)*2;
+
+  // translate
+  x -= window.innerWidth*1.91;
+
+  return [x, y];
 }
 
 function getcoordHistogram(percentX, percentY) {
@@ -127,10 +163,10 @@ function duplicatePointDraw(x, y, n) {
   histplot.innerHTML += `<div id="movePoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 }
 
-function duplicatePointSecond(x, y, n) {
+function duplicatePointSecond(n) {
   const num = n;
 
-  [coordX, coordY] = getcoordsecond(x,y);
+  [coordX, coordY] = getcoordsecond("realPoint"+n);
 
   reshist.innerHTML += `<div id="resPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 }
@@ -227,7 +263,7 @@ function redraw(pointgrow = null){
     i += 1;
   }
 
-  xytable.innerHTML += `<tr>
+  xytable.innerHTML += `<tr id="pointaddbutton">
     <th>
       <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
     </th>
@@ -241,6 +277,61 @@ function redraw(pointgrow = null){
   if (document.getElementById(lastfocus) != null){
     document.getElementById(lastfocus).focus();
   }
+}
+
+// lite redraw
+function redrawlite(){
+
+  let bfln = document.getElementById("bestfitline");
+  while (bfln != null){
+    bfln.remove();
+    bfln = document.getElementById("bestfitline");
+  }
+
+  drawBestFit();
+
+
+  // xytable.innerHTML = `
+  // <tr>
+  //   <tr>
+  //     <th><input type="text" name="woo" id="" value="X"></th>
+  //     <th><input type="text" name="woo" id="" value="Y"></th>
+  //   </tr>
+  // </tr>`;
+
+
+  let i = pointsarr.length-1;
+
+  console.log("point "+i+" being drawn");
+  point = pointsarr[i];
+  drawPoint(point[0]/tickXincrement*10, point[1]/tickYincrement*10, i, true);
+  let act = pointToActual(point[0]/tickXincrement*10, point[1]/tickYincrement*10);
+  addToTable(act[0], act[1], i);
+  i += 1;
+
+  let addbtn = document.getElementById("pointaddbutton");
+  
+  while (addbtn != null){
+    addbtn.remove();
+    addbtn = document.getElementById("pointaddbutton");
+  }
+
+  xytable.innerHTML += `<tr id="pointaddbutton">
+    <th>
+      <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
+    </th>
+  </tr>`;
+
+
+  // this should never actually need to happen it should be blocked earlier
+  // if (step == 2){
+  //   drawHistogram(false);
+  // }
+
+  // we should not need to do this
+  // if (document.getElementById(lastfocus) != null){
+  //   document.getElementById(lastfocus).focus();
+  // }
 }
 
 function initDraw(){
@@ -280,7 +371,7 @@ function addpoint(event){
 
   drawBestFit();
 
-  redraw(pointsarr.length-1);
+  redrawlite();
 }
 
 
@@ -304,7 +395,7 @@ function monitorChange(pointNum){
 
   drawBestFit();
 
-  redraw(-1);
+  redraw();
 }
 
 function pointToActual(x,y){
@@ -331,21 +422,25 @@ function addToTable(x,y,index){
 function glowPoint(num){
   // document.getElementById("tablerow"+num).style.backgroundColor = "red";
   let thePoint = document.getElementById("realPoint"+num);
-  let tableRow = document.getElementById("tableRow"+num);
-
-  tableRow.style.backgroundColor = "red";
   thePoint.style.backgroundColor = "red";
   thePoint.style.zIndex = 10;
 
+  if (step == 1){
+    let tableRow = document.getElementById("tableRow"+num);
+    tableRow.style.backgroundColor = "red";
+  }
 }
 
 function revertPoint(num){
-  let thePoint = document.getElementById("realPoint"+num);
-  let tableRow = document.getElementById("tableRow"+num);
 
-  tableRow.style.backgroundColor = "white";
+  let thePoint = document.getElementById("realPoint"+num);
   thePoint.style.backgroundColor = "#0d6efd";
   thePoint.style.zIndex = 1;
+
+  if (step == 1){
+    let tableRow = document.getElementById("tableRow"+num);
+    tableRow.style.backgroundColor = "white";
+  }
 }
 
 function addNewPoint(){
@@ -353,7 +448,7 @@ function addNewPoint(){
   pointsarr.push(newpts);
   drawBestFit();
 
-  redraw();  
+  redraw(pointsarr.length-1);  
 }
 
 function deletePoint(num){
@@ -483,6 +578,21 @@ async function movePoint(point, x, y){
   }
 }
 
+
+async function movePointResidual(point, x, y){
+  let nowX = point.offsetLeft;
+  let nowY = point.offsetTop;
+  while (nowX < x-10){
+    point.style.left = nowX+"px";
+    point.style.top = nowY+"px";
+
+    nowX += (x-nowX)/100;
+    nowY += (y-nowY)/100;
+
+    await sleep();
+  }
+}
+
 function drawHistogram(anim=true){
   leftDisp.innerHTML = `<h1>Distribution Histogram</h1>
   <div id="horizontalHistogramPlot" class="horizontalHistogramPlot"></div>`;
@@ -558,9 +668,10 @@ function drawResidualHistogram(anim=true){
     i += 1;
   }
 
+
   i = 0;
   for (point of pointsarr){
-    duplicatePointSecond(point[0]/tickXincrement*10, point[1]/tickYincrement*10, i);
+    duplicatePointSecond(i);
     i += 1;
   }
 
@@ -572,16 +683,25 @@ function drawResidualHistogram(anim=true){
   for (point of pointsarr){
     // determine the category
 
+    let element = document.getElementById("resPoint"+pointNum);
+    let actualTop = element.getBoundingClientRect().top + window.scrollY;
+
+    // convert it
+
+    let percentTop = (actualTop-reshist.offsetTop)/reshist.offsetHeight;
+
+    console.log("PERCENT TOP"+percentTop);
+
     let i = 0;
     while (i < 10){
-      if (point[1] < tickYincrement*(i+1)){
-        let endPos = [(window.innerWidth*0.02*catPoints[i]), (reshist.offsetHeight-((0.1*i+0.05)*reshist.offsetHeight))];
+      if (percentTop < i/10){
+        let endPos = [(window.innerWidth*0.02*catPoints[i]+reshist.offsetWidth*0.05), reshist.offsetHeight/10*(i-0.5)];
         catPoints[i] += 1;
 
         let thePt = document.getElementById("resPoint"+pointNum);
 
         if (anim){
-          //movePoint(thePt, endPos[0], endPos[1]);
+          movePointResidual(thePt, endPos[0], endPos[1]);
         } else {
           thePt.style.left = endPos[0]+"px";
           thePt.style.top = endPos[1]+"px";
@@ -602,7 +722,7 @@ function drawResidualHistogram(anim=true){
 async function rotateHistogram(){
 
   let i = 0;
-  while (i <= 90.5){
+  while (i <= 90){
     histplot.style.transform = "rotate(-"+i+"deg)";
     await sleep();
     i += 0.5;
