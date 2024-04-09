@@ -35,7 +35,10 @@
     </nav>
 
     <div class="controlPanel" style="position: fixed;" onclick="nextAction();">
-      Next
+      <div class="goarrow">
+        <h3 style="float: left; padding-left: 10%; font-size: 120%;">Next</h3>
+        <img style="float: left;" src="https://static.vecteezy.com/system/resources/previews/023/790/891/original/right-arrow-icon-clipart-transparent-background-free-free-png.png" alt="black right pointing arrow" height="100%">
+      </div>
     </div>
     <div class=fullwidth>
 
@@ -53,8 +56,8 @@
         </table> 
       </div>
 
-      <div class=halfwidth>
-        <h1>Point graph</h1>
+      <div class=halfwidth id="middledisplay">
+        <h1 id="pglabel">Point graph</h1>
         <div class='plotgraph' id="plotgraph">
         </div>
       </div>

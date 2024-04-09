@@ -89,7 +89,7 @@ function getcoordsecond(id) {
   var leftPos = element.getBoundingClientRect().left + window.scrollX;
 
   let x = -(leftPos - histplot.offsetLeft);
-  let y = topPos - histplot.offsetTop;
+  let y = topPos - histplot.offsetTop+histplot.offsetHeight*0.1875;
 
   // reflect
   x += (-(histplot.offsetLeft-plotgraph.offsetLeft)-x)*2;
@@ -559,6 +559,14 @@ function nextAction(){
     tiltplotgraph();
   } else if (step == 4){
     drawResidualHistogram();
+  } else if (step == 5){
+    rotateResiduals();
+  } else if (step == 6){
+    shiftPanels();
+  } else if (step == 7){
+    shrinkPlots();
+  } else if (step == 8){
+
   }
   step += 1;
 }
@@ -593,9 +601,14 @@ async function movePointResidual(point, x, y){
   }
 }
 
+
+
 function drawHistogram(anim=true){
-  leftDisp.innerHTML = `<h1>Distribution Histogram</h1>
-  <div id="horizontalHistogramPlot" class="horizontalHistogramPlot"></div>`;
+  leftDisp.innerHTML = `
+  <h1 id="disthistlabel">Distribution Histogram</h1>
+  <div id="horizontalHistogramPlot" class="horizontalHistogramPlot">
+    <h1 id="disthistlabelinternal"></h1>
+  </div>`;
 
   histplot = document.getElementById("horizontalHistogramPlot");
 
@@ -650,8 +663,11 @@ function drawHistogram(anim=true){
 
 
 function drawResidualHistogram(anim=true){
-  rightDisp.innerHTML = `<h1>Distribution Histogram</h1>
-  <div id="residualHistogram" class="horizontalHistogramPlot"></div>`;
+  rightDisp.innerHTML = `
+  <h1 id="reshistlabel">Residuals Histogram</h1>
+  <div id="residualHistogram" class="residualHistogram">
+  <h1 id="reshistlabelinternal" style="width: 150%"></h1>
+  </div>`;
 
   reshist = document.getElementById("residualHistogram");
 
@@ -688,14 +704,14 @@ function drawResidualHistogram(anim=true){
 
     // convert it
 
-    let percentTop = (actualTop-reshist.offsetTop)/reshist.offsetHeight;
+    let percentTop = (actualTop-reshist.offsetTop+reshist.offsetHeight*0.125)/reshist.offsetHeight;
 
     console.log("PERCENT TOP"+percentTop);
 
     let i = 0;
     while (i < 10){
       if (percentTop < i/10){
-        let endPos = [(window.innerWidth*0.02*catPoints[i]+reshist.offsetWidth*0.05), reshist.offsetHeight/10*(i-0.5)];
+        let endPos = [(window.innerWidth*0.02*catPoints[i]+reshist.offsetWidth*0.05), reshist.offsetHeight*((i-0.5)/10)];
         catPoints[i] += 1;
 
         let thePt = document.getElementById("resPoint"+pointNum);
@@ -787,6 +803,112 @@ async function tiltplotgraph(){
   console.log("trying to tilt "+tiltAngle+" degrees");
 }
 
+
+
+async function rotateResiduals(){
+
+  let i = 0;
+  while (i <= 90){
+    reshist.style.transform = "rotate(-"+i+"deg) translateX("+(-(-(i/90)*30+12.5))+"%)";
+    await sleep();
+    i += 0.5;
+  }
+}
+
+
+async function shiftPanels(){
+  let i = 0;
+
+  let pglabel = document.getElementById("pglabel");
+  let mdisp = document.getElementById("middledisplay");
+
+  window.scrollTo({ left: 0, behavior: 'smooth' })
+
+  while (i < 100){
+    plotgraph.style.opacity = (100-i)/100;
+    pglabel.style.opacity = (100-i)/100;
+    await sleep();
+    i += 1;
+  }
+
+  document.body.style.overflowX = "hidden";
+
+  i = 33
+  while (i > 0){
+    mdisp.style.width = i+"%";
+    await sleep();
+    i -= 1;
+  }
+
+  let rh = document.getElementById("reshistlabel");
+  let dh = document.getElementById("disthistlabel");
+
+  i = 100
+  while (i > 0){
+    rh.style.opacity = i/100;
+    dh.style.opacity = i/100;
+    await sleep();
+    i -= 1;
+  }
+
+  rh = document.getElementById("reshistlabelinternal");
+  dh = document.getElementById("disthistlabelinternal");
+
+  rh.style.transform = "rotate(90deg) translate(45% ,-50%)";
+  dh.style.transform = "rotate(90deg) translate(45% ,-150%)";
+
+
+  rh.textContent = "Variability explained by the model"
+  dh.textContent = "Initial variability of data"
+
+  i = 0
+  while (i < 100){
+    rh.style.opacity = i/100;
+    dh.style.opacity = i/100;
+    await sleep();
+    i += 1;
+  }
+}
+
+async function shrinkPlots(){
+  let i = 100;
+
+  let startTransRes = reshist.style.transform;
+  let startTransHist = histplot.style.transform;
+
+
+  while (i > 50){
+
+    reshist.style.transform = startTransRes + "scale("+i/100+")";
+    histplot.style.transform = startTransHist + "scale("+i/100+")";
+
+    await sleep();
+    i -= 0.5;
+  }
+
+  startTransRes = reshist.style.transform;
+  startTransHist = histplot.style.transform;
+  let initDiff = reshist.offsetLeft + histplot.offsetLeft + reshist.offsetWidth*0.27 + histplot.offsetWidth;
+
+
+  let dh = document.getElementById("disthistlabelinternal");
+
+  i = 0;
+  while (i < 100){
+
+    histplot.style.transform = startTransHist + "translateY("+(i/100*initDiff)+"px)";
+
+    reshist.style.transform = startTransRes + "translateX("+i+"%)";
+
+    dh.style.borderTop = "8px solid rgba(0,0,0,"+(i/100)+")";
+
+
+    await sleep();
+    i += 1;
+  }
+
+
+}
 
 
 // next add adapting to data when new point is entered
