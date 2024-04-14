@@ -13,9 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
 
-  <script
-  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
-  </script> 
+  <script src="./js/preloadedData.js"></script>
+  <script src="./js/testSamples.js"></script>
 
   <body>
 
@@ -24,31 +23,26 @@
         <li class="headername">R² Visualizer</li>
       </ul>
       <ul class="nav-items navcenter" id="nav">
-        <li><a class="larget" onclick="openel('randomtree');">Random Data</a></li>
-        <li><a class="larget" id='header2' href="./bst.html">Iams</a></li>
+        <li><a class="larget" onclick="openel('preloadedSelect');">Preloaded Data</a></li>
+        <li><a class="larget" onclick="openel('testSelect');">Test Samples</a></li>
       </ul> 
       <ul class="nav-items navright">
-        <li title="Settings"><a onclick="openprefs();"><img src="assets/settings.png" height="30px" class="logo"></a></li>
+        <li title="Settings"><a onclick="openel('preferences');"><img src="assets/settings.png" height="30px" class="logo"></a></li>
         <li title="Help"><a onclick="openel('instructions')"><img src="assets/help.png" height="30px" class="logo"></a></li>
         <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="assets/reportbuggy.png" height="30px" class="logo"></a></li>
       </ul>
     </nav>
 
-    <div class="controlPanel" style="position: fixed;" onclick="nextAction();">
-      <div class="goarrow">
-        <h3 style="float: left; padding-left: 10%; font-size: 120%;">Next</h3>
-        <img style="float: left;" src="https://static.vecteezy.com/system/resources/previews/023/790/891/original/right-arrow-icon-clipart-transparent-background-free-free-png.png" alt="black right pointing arrow" height="100%">
-      </div>
-    </div>
-    <div class=fullwidth>
+
+    <div class=fullwidth id="alldisplays">
 
       <div class=halfwidth id="leftdisplay" style="padding-left: 20px;">
         <h1>Point Table</h1>
         <table id="xytable" style="display: block; overflow: auto; margin-top: 0px; padding: 2%; width: fit-content; overflow-x: hidden;">
           <tr>
-            <th><input type="text" name="woo" id="" value="X"></th>
-            <th><input type="text" name="woo" id="" value="Y"></th>
-            <td style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; background-color: white; cursor: pointer; border-radius: 25px; font-size: 75%; opacity: 0;">delete</p></td>
+            <th><input class="pointInput" type="text" name="woo" id="" value="X"></th>
+            <th><input class="pointInput" type="text" name="woo" id="" value="Y"></th>
+            <td style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; background-color: var(--contrast); cursor: pointer; border-radius: 25px; font-size: 75%; opacity: 0;">delete</p></td>
           </tr>
           <th id="pointaddbutton">
             <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
@@ -57,8 +51,9 @@
       </div>
 
       <div class=halfwidth id="middledisplay">
-        <h1 id="pglabel">Point graph</h1>
+        <h1 id="pglabel">Point graph <span class="bfequation" id="bfequation"></span></h1>
         <div class='plotgraph' id="plotgraph">
+          <div id="tickedBox" class="tickedBox"></div>
         </div>
       </div>
 
@@ -71,6 +66,44 @@
       </div> -->
     </div>
 
+      <div class="controlPanel" style="position: fixed;" onclick="nextAction();">
+      <div class="goarrow">
+        <h3 style="padding-left: 10%;">Next</h3>
+        <img src="https://static.vecteezy.com/system/resources/previews/023/790/891/original/right-arrow-icon-clipart-transparent-background-free-free-png.png" alt="black right pointing arrow" height="100%">
+      </div>
+    </div>
+
+    <div id="screen" class="screen"></div>
+
+
+    <div class="largenotif" id="preferences" style="height: fit-content;">
+      <h1 style="font-size: 25px;">Settings</h1>
+      <h3 style="font-size: 15px; margin-bottom: 5px; margin-top: 0px;" id="theme">Theme: (Dark)</h3>
+      <label class="switch" onclick="toggletheme();">
+        <input type="checkbox">
+        <span class="slider round"></span>
+      </label>
+      <div class="close" onclick="closeel('preferences');">Close</div>
+    </div>
+    
+
+    <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+      <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Click the graph or add points to the table to create data. Alternatively, use preloaded data or samples.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>2. Click the next button to view steps of the animation.</h5>
+      <div class="close" onclick="closeel('instructions'); closescreen();">Close</div>
+    </div>
+
+
+    <div class="largenotif" id="preloadedSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
+      <h1 style='font-size: 25px; margin: 10px;'>Select Preloaded Data</h1>
+      
+    </div>
+
+
+  <div class="largenotif" id="testSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
+      <h1 style='font-size: 25px; margin: 10px;'>Select Test Sample</h1>
+  </div>
 
 
     

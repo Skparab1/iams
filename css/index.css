@@ -100,7 +100,7 @@ nav {
   margin: 0.5rem;
   display: block;
   background-color: rgb(71, 71, 71);
-  border: 3px solid black;
+  border: 3px solid var(--contrast);
   border-radius: 5px;
   color: white;
   transition: background-color 0.25s;
@@ -137,6 +137,10 @@ nav {
   padding: 0.63rem;
 }
 
+h1 {
+  color: var(--contrast);
+}
+
 td {
   font-family: GlacierIndifference;
   /* border: 0.75px solid black; */
@@ -147,7 +151,7 @@ table {
   width: 70%;
   margin: 15%;
   margin-top: 100px;
-  border: 1px solid black;
+  border: 1px solid var(--contrast);
 
   overflow-y: scroll;
 }
@@ -161,9 +165,9 @@ th {
   margin: 5%;
   width: 70%;
   aspect-ratio: 1/1;
-  border-bottom: 5px solid black;
+  border-bottom: 5px solid var(--contrast);
   cursor: crosshair;
-  border-left: 5px solid black;
+  border-left: 5px solid var(--contrast);
   transform: rotate(0.00001deg);
 }
 
@@ -181,7 +185,7 @@ th {
   position: absolute;
   width: 2%;
   height: 1%;
-  background-color: black;
+  background-color: var(--contrast);
   transform: translate(-50%, -50%);
 }
 
@@ -189,13 +193,13 @@ th {
   position: absolute;
   width: 2%;
   height: 1%;
-  background-color: black;
+  background-color: var(--contrast);
   transform: rotate(90deg) translate(-25%, 200%);
 }
 
 .tickLabel {
   position: absolute;
-  color: black;
+  color: var(--contrast);
   font-weight: bold;
 }
 
@@ -261,15 +265,15 @@ tr {
   bottom: 0px;
   left: 40%;
   right: 50%;
-  z-index: 15;
-  background-color: black;
+  background-color: var(--contrast);
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
   border: 4px solid var(--main);
-  border-bottom: 0px white;
+  border-bottom: 0px var(--bg);
 }
 
 .goarrow {
+  display: flex;
   width: 86%;
   float: left;
   height: 100%;
@@ -289,7 +293,7 @@ tr {
   margin: 5%;
   width: 70%;
   aspect-ratio: 1/1;
-  border-left: 5px solid black;
+  border-left: 5px solid var(--contrast);
   transform: rotate(0.00001deg);
 }
 
@@ -297,6 +301,198 @@ tr {
   margin: 5%;
   width: 70%;
   aspect-ratio: 1/1.414;
-  border-left: 5px solid black;
+  border-left: 5px solid var(--contrast);
   transform: translateY(-12.5%) rotate(0.00001deg);
+}
+
+
+
+.largenotif{
+  position: fixed;
+  display: none;
+  width: 50%;
+  height: 30%;
+  left: 25%;
+  top: 66%;
+  background-color: var(--slight);
+  border-radius: 25px;
+  border: 6px solid var(--main);
+  text-align: center;
+  font-size: 50px;
+  color: var(--contrast);
+  opacity: 0;
+  z-index: 1000;
+  transition: opacity 0.25s, display 0s, top 0.25s, background-color 0.25s;
+}
+
+.close {
+  width: 20%;
+  margin-left: 40%;
+  background: var(--bg);
+  color: var(--contrast);
+  border: 5px solid var(--main);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.exit-modal {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  color: var(--contrast);
+  bottom: 0;
+  right: 15px;
+  width: 2.5rem;
+  font-size: 10px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  user-select: none;
+  font-weight: bold;
+}
+
+
+.pointInput {
+  background-color: var(--bg);
+  color: var(--contrast);
+  border: 2px solid var(--slight);
+}
+
+
+
+/* totally not copied over from w3 lmfao */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--contrast);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--bg);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--main);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--main);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+
+
+.screen{
+  display: none;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0;
+  transition: opacity 0.25s, display 0.25s;
+}
+
+
+.preloadedOption {
+  width: 30%;
+  margin: 1.5%;
+  height: 150px;
+  background-color: var(--bgslight);
+  border-radius: 25px;
+  cursor: pointer;
+  opacity: 0.8;
+  font-size: 50%;
+  color: black;
+  overflow: hidden;
+  transition: opacity 0.5s;
+
+}
+
+.preloadedOption:hover {
+  opacity: 1;
+}
+
+.tickedBox {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 0%;
+  height: 0%;
+  border-top: 2px dashed rgb(200,0,0);
+  border-right: 2px dashed rgb(200,0,0);
+}
+
+.bfequation {
+  font-size: 20px;
+  color: red;
+  transform: rotate(0.01deg);
+  margin-bottom: 0px;
+}
+
+.endplot {
+  width: 33%;
+  margin-left: 33%;
+  aspect-ratio: 3 / 2;
+/*  background-color: rgba(255, 255, 0, 0.2);*/ /* looks a bit cheap imo 8*/
+}
+
+.endpanel {
+/*  position: absolute;*/
+  width: 50%;
+  margin-left: 25%;
+  height: 100%;
+}
+
+.endexplain {
+  position: absolute;
+  left: 0px;
+  margin-top: 10%;
+  margin-left: 20%;
+  width: 50%;
+  height: 100%;
+  color: var(--contrast);
+  font-size: 1000%;
 }

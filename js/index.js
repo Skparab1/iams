@@ -39,8 +39,8 @@ function getcoord(percentX, percentY) {
   // let x = plotgraph.offsetLeft+percentX/100*plotgraph.offsetWidth+1.5;
   // let y = plotgraph.offsetTop+(1-(percentY/100))*plotgraph.offsetHeight+1.5;
 
-  let x = percentX/100*plotgraph.offsetWidth+1.5;
-  let y = (1-(percentY/100))*plotgraph.offsetHeight+1.5;
+  let x = percentX/100*plotgraph.offsetWidth;
+  let y = (1-(percentY/100))*plotgraph.offsetHeight;
 
   return [x,y];
 }
@@ -181,7 +181,7 @@ function drawTickY(x, y, num, push=true) {
   [coordX, coordY] = getcoord(x,y);
 
   plotgraph.innerHTML += `
-    <div id="labelY${num}" class=tickLabel style="left: ${coordX-0.035*window.innerWidth}px; top: ${coordY-9.75}px;">${goodNumber(y*(tickYincrement/10))}</div>
+    <div id="labelY${num}" class=tickLabel style="left: ${coordX-0.035*window.innerWidth}px; top: ${coordY-9.75}px;">${goodNumber(Math.round(y*(tickYincrement/10)))}</div>
     <div id="tickY${num}" class=tickY style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 }
 
@@ -192,7 +192,7 @@ function drawTickHistogram(x, y, i) {
   const num = i;
 
   histplot.innerHTML += `
-    <div id="histLabel${num}" class=tickLabel style="left: ${coordX-0.035*window.innerWidth}px; top: ${coordY-9.75}px;">${goodNumber(y*(tickYincrement/10))}</div>
+    <div id="histLabel${num}" class=tickLabel style="left: ${coordX-0.035*window.innerWidth}px; top: ${coordY-9.75}px;">${goodNumber(Math.round(y*(tickYincrement/10)))}</div>
     <div id="histTick${num}" class=tickY style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 }
 
@@ -214,7 +214,7 @@ function drawTickX(x, y, i, push=true) {
   [coordX, coordY] = getcoord(x,y);
 
   plotgraph.innerHTML += `
-  <div id="labelX${i}" class=tickLabel style="left: ${coordX-7.75}px; top: ${coordY}px;">${x*(tickXincrement/10)}</div>
+  <div id="labelX${i}" class=tickLabel style="left: ${coordX-7.75}px; top: ${coordY}px;">${Math.round(x*(tickXincrement/10))}</div>
   <div id="tickX${i}" class=tickX style="left: ${coordX}px; top: ${coordY-0.017*plotgraph.offsetHeight}px;"></div>`;
 }
 
@@ -236,8 +236,8 @@ function redraw(pointgrow = null){
   xytable.innerHTML = `
   <tr>
     <tr>
-      <th><input type="text" name="woo" id="" value="X"></th>
-      <th><input type="text" name="woo" id="" value="Y"></th>
+      <th><input class="pointInput" type="text" name="woo" id="" value="X"></th>
+      <th><input class="pointInput" type="text" name="woo" id="" value="Y"></th>
     </tr>
   </tr>`;
 
@@ -263,6 +263,8 @@ function redraw(pointgrow = null){
     i += 1;
   }
 
+  plotgraph.innerHTML += `<div id="tickedBox" class="tickedBox"></div>`;
+
   xytable.innerHTML += `<tr id="pointaddbutton">
     <th>
       <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
@@ -274,8 +276,17 @@ function redraw(pointgrow = null){
     drawHistogram(false);
   }
 
-  if (document.getElementById(lastfocus) != null){
-    document.getElementById(lastfocus).focus();
+  if (lastfocus.substring(0,1) == "X"){
+    newfocus = "Y"+lastfocus.substring(1);
+  } else {
+    newfocus = "X"+(parseInt(lastfocus.substring(1))+1);
+  }
+
+  if (document.getElementById(newfocus) != null){
+    document.getElementById(newfocus).focus();
+    // if (document.getElementById(newfocus).value == 0.00){
+    //   document.getElementById(newfocus).value = "";
+    // }
   }
 }
 
@@ -366,7 +377,18 @@ function addpoint(event){
     return;
   }
 
-  let newpts = convertToPercentage(event.clientX, event.clientY);
+  let newpts = convertToPercentage(event.clientX+window.scrollX, event.clientY+window.scrollY);
+  pointsarr.push(newpts);
+
+  drawBestFit();
+
+  redrawlite();
+}
+
+
+function addpointResource(x, y){
+
+  let newpts = [x,y];
   pointsarr.push(newpts);
 
   drawBestFit();
@@ -382,12 +404,12 @@ function monitorChange(pointNum){
   let gety = parseFloat(document.getElementById("Y"+(pointNum)).value);
 
   while (getx > tickXincrement*10){
-    tickXincrement = tickXincrement + 10;
+    tickXincrement = tickXincrement + 1;
   }
 
 
   while (gety > tickYincrement*10){
-    tickYincrement = tickYincrement + 10;
+    tickYincrement = tickYincrement + 1;
   }
 
 
@@ -396,6 +418,20 @@ function monitorChange(pointNum){
   drawBestFit();
 
   redraw();
+}
+
+function checkForChange(){
+  
+  for (point of pointsarr){
+    
+    while (point[0] > tickXincrement*10){
+      tickXincrement = tickXincrement + 1;
+    }
+
+    while (point[1] > tickYincrement*10){
+      tickYincrement = tickYincrement + 1;
+    }
+  }
 }
 
 function pointToActual(x,y){
@@ -410,9 +446,9 @@ function addToTable(x,y,index){
 
   xytable.innerHTML += `
     <tr id="tableRow${idx}" onmouseover="glowPoint(${idx});" onmouseout="revertPoint(${idx});">
-      <td><input type="number" step="0.01" name="" id="X${idx}" value="${x.toFixed(2)}" onchange="lastfocus = 'X${idx}'; monitorChange(${idx});"></td>
-      <td><input type="number" step="0.01" name="" id="Y${idx}" value="${y.toFixed(2)}" onchange="lastfocus = 'Y${idx}'; monitorChange(${idx});"></td>
-      <td onclick="deletePoint(${idx});" style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%;">delete</p></td>
+      <td><input class="pointInput" type="number" step="0.01" name="" id="X${idx}" value="${x.toFixed(2)}" onchange="lastfocus = 'X${idx}'; monitorChange(${idx});"></td>
+      <td><input class="pointInput" type="number" step="0.01" name="" id="Y${idx}" value="${y.toFixed(2)}" onchange="lastfocus = 'Y${idx}'; monitorChange(${idx});"></td>
+      <td onclick="deletePoint(${idx});" style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%; color: var(--contrast);">delete</p></td>
     </tr>`
 
   // xytable.scrollTo({ top: 10000, behavior: 'smooth' })
@@ -425,9 +461,25 @@ function glowPoint(num){
   thePoint.style.backgroundColor = "red";
   thePoint.style.zIndex = 10;
 
+  let tickedBox = document.getElementById("tickedBox");
+  tickedBox.style.width = pointsarr[num][0]/tickXincrement*10+"%";
+  tickedBox.style.height = pointsarr[num][1]/tickYincrement*10+"%";
+
+  console.log("scrolled called");
+
   if (step == 1){
     let tableRow = document.getElementById("tableRow"+num);
     tableRow.style.backgroundColor = "red";
+
+    console.log("scrolled out", xytable.offsetHeight, xytable.scrollY, tableRow.offsetTop);
+
+    if (xytable.offsetHeight + xytable.scrollTop <= tableRow.offsetTop){
+      console.log("scrolled");
+      xytable.scrollTo({ top: tableRow.offsetTop+xytable.offsetHeight, behavior: 'smooth' })
+    } else if (xytable.scrollTop >= tableRow.offsetTop){
+      console.log("scrolled");
+      xytable.scrollTo({ top: tableRow.offsetTop, behavior: 'smooth' })
+    }
   }
 }
 
@@ -437,25 +489,52 @@ function revertPoint(num){
   thePoint.style.backgroundColor = "#0d6efd";
   thePoint.style.zIndex = 1;
 
+  let tickedBox = document.getElementById("tickedBox");
+
+  tickedBox.style.width = "0%";
+  tickedBox.style.height = "0%";
+
+
   if (step == 1){
     let tableRow = document.getElementById("tableRow"+num);
-    tableRow.style.backgroundColor = "white";
+    tableRow.style.backgroundColor = "rgba(0,0,0,0)";
   }
 }
 
-function addNewPoint(){
+async function addNewPoint(){
   let newpts = [0,0];
   pointsarr.push(newpts);
   drawBestFit();
 
+  let beforeScroll = xytable.scrollTop;
+
   redraw(pointsarr.length-1);  
+
+  xytable.scrollTo({ top: beforeScroll, behavior: 'instant' });
+
+  // ok effect but looks kind of cheap
+  // not sure if i want to invest in a glow
+  // glowPoint(pointsarr.length-1);
+
+  // await sleep(1000);
+
+  // revertPoint(pointsarr.length-1);
 }
 
 function deletePoint(num){
   pointsarr.splice(num, 1);
 
+  console.log("HEEERR");
+
+
+  let beforeScroll = xytable.scrollTop;
+
   drawBestFit();
   redraw();
+
+  console.log(beforeScroll);
+
+  xytable.scrollTo({ top: beforeScroll, behavior: 'instant' });
 }
 
 
@@ -492,9 +571,12 @@ function bestFit(allPoints){
 
   let numerator = 0;
 
+  let sumY = 0;
+
   let i = 0;
   while (i < n){
     numerator += (arrX[i]*arrY[i]);
+    sumY += arrY[i];
     i += 1;
   }
   numerator = numerator - n * xbar * ybar;
@@ -513,9 +595,41 @@ function bestFit(allPoints){
   let a = numerator/denominator;
   let b = ybar - a * xbar;
 
-  console.log(" y = "+a+"x + "+b);
+  bestFitSlope = a * tickXincrement / tickYincrement;
 
-  bestFitSlope = a;
+  // do rsquared
+
+  let regressionSquaredError = 0;
+  let totalSquaredError = 0;
+
+  let meanY = sumY/n;
+
+
+  i = 0;
+  while (i < pointsarr.length){
+    regressionSquaredError += Math.pow((pointsarr[i][1]-ySolution(a, b, pointsarr[i][0])), 2);
+    totalSquaredError += Math.pow((pointsarr[i][1]-meanY), 2);
+    i += 1;
+  }
+
+  let rSquared = 1 - (regressionSquaredError / totalSquaredError);
+
+  // console.log(regressionSquaredError, totalSquaredError);
+
+
+  let disp = document.getElementById("bfequation");
+
+  if (a == 0 && b == 0){
+    disp.innerHTML = "ŷ = 0 &nbsp&nbsp •  &nbsp&nbsp  r² = " + Math.round(rSquared * 100) / 100;
+  } else if (a == 0){
+    disp.innerHTML = "ŷ = " + Math.round(b * 100) / 100 + "  &nbsp&nbsp  •  &nbsp&nbsp  r² = " + Math.round(rSquared * 100) / 100;
+  } else if (b == 0){
+    disp.innerHTML = "ŷ = " + Math.round(a * 100) / 100 + "x" + " &nbsp&nbsp   •   &nbsp&nbsp r² = " + Math.round(rSquared * 100) / 100;
+  } else if (a < 0){
+    disp.innerHTML = "ŷ = " + Math.round(b * 100) / 100 + " - " + Math.abs(Math.round(a * 100) / 100) + "x" + " &nbsp&nbsp   •  &nbsp&nbsp  r² = " + Math.round(rSquared * 100) / 100;
+  } else if (a > 0){
+    disp.innerHTML = "ŷ = " + (Math.round(b * 100) / 100) + " + " + Math.round(a * 100) / 100 + "x" + " &nbsp&nbsp   •  &nbsp&nbsp  r² = " + Math.round(rSquared * 100) / 100;
+  }
 
   return [a, b]
 }
@@ -741,7 +855,7 @@ async function rotateHistogram(){
   while (i <= 90){
     histplot.style.transform = "rotate(-"+i+"deg)";
     await sleep();
-    i += 0.5;
+    i += (95-i)/70;
   }
 
   // adjust all of the ticks
@@ -811,7 +925,7 @@ async function rotateResiduals(){
   while (i <= 90){
     reshist.style.transform = "rotate(-"+i+"deg) translateX("+(-(-(i/90)*30+12.5))+"%)";
     await sleep();
-    i += 0.5;
+    i += (95-i)/70;
   }
 }
 
@@ -855,7 +969,7 @@ async function shiftPanels(){
   dh = document.getElementById("disthistlabelinternal");
 
   rh.style.transform = "rotate(90deg) translate(45% ,-50%)";
-  dh.style.transform = "rotate(90deg) translate(45% ,-150%)";
+  dh.style.transform = "rotate(90deg) translate(45% ,-300%)";
 
 
   rh.textContent = "Variability explained by the model"
@@ -886,30 +1000,251 @@ async function shrinkPlots(){
     i -= 0.5;
   }
 
+  let allDisp = document.getElementById("alldisplays");
+
+  allDisp.innerHTML += "<div id='endpanel' class='endpanel'></div>";
+
+  let endPanel = document.getElementById("endpanel");
+
+  endPanel.innerHTML = `<div class="endexplain">r² = 1 - </div> <div class="endplot" id="destination1" style="border-bottom: 4px solid var(--contrast);"></div> <div class="endplot" id="destination2"></div>`; 
+
+
+  let destination1 = document.getElementById("destination1");
+  let destination2 = document.getElementById("destination2");
+
   startTransRes = reshist.style.transform;
   startTransHist = histplot.style.transform;
-  let initDiff = reshist.offsetLeft + histplot.offsetLeft + reshist.offsetWidth*0.27 + histplot.offsetWidth;
+  let initDiffx = destination1.getBoundingClientRect().left+destination1.getBoundingClientRect().width*1.87-histplot.getBoundingClientRect().left;
+  let initDiffy = destination1.getBoundingClientRect().top*0.75-histplot.getBoundingClientRect().top;
+
+  let initDiffx1 = destination2.getBoundingClientRect().left-destination2.getBoundingClientRect().width*2.18-reshist.getBoundingClientRect().left;
+  let initDiffy1 = destination2.getBoundingClientRect().top*-1.05-destination2.getBoundingClientRect().height-reshist.getBoundingClientRect().top;
 
 
-  let dh = document.getElementById("disthistlabelinternal");
+  console.log(initDiffx, initDiffy, initDiffx1, initDiffy1);
+
+  // this is one of the stranges bugs ive ever seen
+  // for some reason i need to redefine these in order for it to work
+  histplot = document.getElementById("horizontalHistogramPlot");
+  reshist = document.getElementById("residualHistogram");
+
+
 
   i = 0;
   while (i < 100){
 
-    histplot.style.transform = startTransHist + "translateY("+(i/100*initDiff)+"px)";
+    console.log("in the loop");
 
-    reshist.style.transform = startTransRes + "translateX("+i+"%)";
+    histplot.style.transform = startTransHist + "translateY("+(i/100*initDiffx)+"px) translateX("+(-i/100*initDiffy)+"px)";
 
-    dh.style.borderTop = "8px solid rgba(0,0,0,"+(i/100)+")";
+    reshist.style.transform = startTransRes + " translateY("+(i/100*initDiffx1)+"px) translateX("+(-i/100*initDiffy1)+"px)";
 
 
     await sleep();
     i += 1;
   }
 
-
 }
 
+function closeOthers(thisEl){
+  let els = ["preloadedSelect", "testSelect", "preferences", "instructions"];
+  for (el of els){
+    if (document.getElementById(el).style.display == "block" && el != thisEl){
+      closeel(el);
+    }
+  }
+}
+
+// open whatever dialog
+function openel(el){
+  closeOthers();
+  openscreen();
+  document.getElementById(el).style.display = 'block';
+  document.getElementById(el).style.opacity = 1;
+  document.getElementById(el).style.top = '25%';
+}
+
+function closeel(el){
+  closescreen();
+  //document.getElementById('solutions').style.display = 'none';
+  document.getElementById(el).style.opacity = 0;
+  document.getElementById(el).style.top = '100%';
+}
+
+// open the background backdrop when a dialog is opened
+function openscreen(){
+  let el = document.getElementById("screen");
+  el.style.display = "block";
+  el.style.opacity = 0.4;
+}
+
+// close the background backdrop
+function closescreen(){
+  let el = document.getElementById("screen");
+  el.style.display = "none";
+  el.style.opacity = 0;
+}
+
+// change the theme from dark to light or override for setting it to whatever the saved theme is
+function toggletheme(override){
+  var r = document.querySelector(':root');
+
+  // get elapsed time since last time a toggle was clicked
+  let endtime = new Date();
+  var timediff = endtime - lasttoggle; 
+  lasttoggle = endtime;
+
+  // if we are not changing to the saved theme and the user just pressed the theme change then dont change
+  // this is there because something toggle theme used to get called two times in a row and cancel itself out
+  if (timediff < 333 && !override){
+      return;
+  }
+
+  // console.log('changeing from  '+theme);
+  if (theme == 'dark'){
+      // make light
+      theme = 'light';
+      localStorage.setItem('bttheme','light');
+      document.getElementById('theme').textContent = "Theme: (light)";
+      r.style.setProperty('--bg', 'white');
+      r.style.setProperty('--contrast', 'black');
+      r.style.setProperty('--main', '#0d6efd');
+      r.style.setProperty('--slight', 'rgb(220,220,220)');
+  } else {
+      // make dark
+      theme = 'dark';
+      localStorage.setItem('bttheme','dark');
+      document.getElementById('theme').textContent = "Theme: (dark)";
+      r.style.setProperty('--bg', 'black');
+      r.style.setProperty('--contrast', 'white');
+      r.style.setProperty('--main', '#0d6efd');
+      r.style.setProperty('--slight', 'rgb(40, 40, 40)');
+  }
+}
+
+// force the theme to change to dark, if thats the saved theme
+function forcedark(){
+  theme = 'dark';
+  localStorage.setItem('bttheme','dark');
+  document.getElementById('theme').textContent = "Theme: (dark)";
+  
+  var r = document.querySelector(':root');
+  r.style.setProperty('--bg', 'black');
+  r.style.setProperty('--contrast', 'white');
+  r.style.setProperty('--main', '#0d6efd');
+  r.style.setProperty('--slight', 'rgb(40, 40, 40)');
+}
+
+function usePreloadedData(data){
+
+  pointsarr = [];
+  tickXincrement = 1;
+  tickYincrement = 1;
+  redraw();
+
+  let i = 0;
+  while (i < data.x.length){
+    addpointResource(data.x[i],data.y[i])
+    // pointsarr.push([data.x[i],data.y[i]]);
+    i += 1;
+  }
+
+  checkForChange();
+  drawBestFit();
+  redraw();
+
+  console.log(pointsarr);
+}
+
+function selectProblem(nm){
+  for (problem of allPreloaded){
+    if (problem.name == nm){
+      usePreloadedData(problem);
+      break;
+    }
+  }
+  for (problem of allSamples){
+    if (problem.name == nm){
+      usePreloadedData(problem);
+      break;
+    }
+  }
+}
+
+
+function displayPreloaded(){
+
+  let disp = document.getElementById("preloadedSelect");
+
+  let i = 0;
+  while (i < allPreloaded.length){
+    let currentrow = `<div style="display: flex">`;
+
+    let j = 0;
+    while (j < 3 && i < allPreloaded.length){
+      problem = allPreloaded[i];
+
+      currentrow += `<div class="preloadedOption" onclick="closeel('preloadedSelect'); selectProblem('${problem.name}');">${problem.name}      <img src="./assets/problems/${problem.img}" width="100%" alt="image of stats problem with table"></div>`;
+
+      j += 1; 
+      i += 1;
+    }
+
+    currentrow += `</div>`;
+
+
+    disp.innerHTML += currentrow;
+  }
+
+
+  disp.innerHTML += `<div class="close" onclick="closeel('preloadedSelect'); closescreen();">Close</div>`;
+}
+
+
+function displaySamples(){
+
+  let disp = document.getElementById("testSelect");
+
+  let i = 0;
+  while (i < allSamples.length){
+    let currentrow = `<div style="display: flex">`;
+
+    let j = 0;
+    while (j < 3 && i < allSamples.length){
+      problem = allSamples[i];
+
+      currentrow += `<div class="preloadedOption" onclick="closeel('testSelect'); selectProblem('${problem.name}');">${problem.name}      <img src="./assets/problems/${problem.img}" width="100%" alt="image of a scatterplot with data"></div>`;
+
+      j += 1; 
+      i += 1;
+    }
+
+    currentrow += `</div>`;
+
+
+    disp.innerHTML += currentrow;
+  }
+
+
+  disp.innerHTML += `<div class="close" onclick="closeel('testSelect'); closescreen();">Close</div>`;
+}
+
+
+// load the settings from localstorage
+let theme = localStorage.getItem('bttheme');
+let angle = localStorage.getItem('btangle');
+let demospeed = localStorage.getItem('btspeed');
+
+let lasttoggle = new Date();
+
+if (theme == null){
+    localStorage.setItem("bttheme",'light');
+    theme = 'light';
+} else if (theme == 'dark'){
+    forcedark();
+}
+
+// usePreloadedData(testSample1);
 
 // next add adapting to data when new point is entered
 
@@ -917,6 +1252,9 @@ xytable.style.maxHeight = window.innerHeight*0.65+"px";
 
 
 initDraw();
+
+displayPreloaded();
+displaySamples();
 
 
 window.addEventListener("resize", redraw);
