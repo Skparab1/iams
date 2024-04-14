@@ -1244,7 +1244,14 @@ if (theme == null){
     forcedark();
 }
 
-// usePreloadedData(testSample1);
+
+let startUp = localStorage.getItem("IamsFirstUse");
+
+if (startUp == null){
+  openel("instructions");
+  localStorage.setItem("IamsFirstUse","StartedUp");
+}
+
 
 // next add adapting to data when new point is entered
 
