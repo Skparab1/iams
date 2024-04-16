@@ -444,7 +444,7 @@ input:checked + .slider:before {
   border-radius: 25px;
   cursor: pointer;
   opacity: 0.8;
-  font-size: 50%;
+  font-size: 37%;
   color: black;
   overflow: hidden;
   transition: opacity 0.5s;
@@ -495,4 +495,26 @@ input:checked + .slider:before {
   height: 100%;
   color: var(--contrast);
   font-size: 1000%;
+}
+
+
+.exit-modal {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  color: var(--contrast);
+  top: 0;
+  right: 0;
+  width: 2.5rem;
+  font-size: 2.5rem;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  user-select: none;
+  font-weight: bold;
+  transition: color 0.25s;
+}
+
+.exit-modal:hover {
+  color: var(--main);
 }

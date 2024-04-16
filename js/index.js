@@ -236,8 +236,8 @@ function redraw(pointgrow = null){
   xytable.innerHTML = `
   <tr>
     <tr>
-      <th><input class="pointInput" type="text" name="woo" id="" value="X"></th>
-      <th><input class="pointInput" type="text" name="woo" id="" value="Y"></th>
+      <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">X</h1></th>
+      <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">Y</h1></th>
     </tr>
   </tr>`;
 
@@ -1046,6 +1046,29 @@ async function shrinkPlots(){
 
 }
 
+
+// function dragPoint(event){
+//   // try to drag a point
+
+//   alert("being dragged");
+
+//   if (!plotActive){
+//     return;
+//   }
+
+//   let thePoint = document.getElementById("realPoint"+num);
+
+
+//   let newpts = convertToPercentage(event.clientX+window.scrollX, event.clientY+window.scrollY);
+//   pointsarr[num] = (newpts);
+
+//   thePoint.style.left = pointsarr[num][0]/tickXincrement*10+"px";
+//   thePoint.style.top = pointsarr[num][1]/tickYincrement*10+"px";
+// }
+
+
+
+
 function closeOthers(thisEl){
   let els = ["preloadedSelect", "testSelect", "preferences", "instructions"];
   for (el of els){
@@ -1156,6 +1179,26 @@ function usePreloadedData(data){
   console.log(pointsarr);
 }
 
+function getRandomData(){
+  let randX = [];
+  let randY = [];
+
+  let i = 0;
+  let limit = Math.floor(Math.random()*30+10);
+  let limitX = Math.floor(Math.random()*300+50);
+  let limitY = Math.floor(Math.random()*300+50);
+  while (i < limit){
+    randX.push(Math.floor(Math.random() * limitX));
+    randY.push(Math.floor(Math.random() * limitY));
+    i += 1;
+  }
+
+  return {
+    x: randX,
+    y: randY
+  }
+}
+
 function selectProblem(nm){
   for (problem of allPreloaded){
     if (problem.name == nm){
@@ -1164,6 +1207,10 @@ function selectProblem(nm){
     }
   }
   for (problem of allSamples){
+    if (nm == "Random Data"){
+      usePreloadedData(getRandomData());
+      break;
+    }
     if (problem.name == nm){
       usePreloadedData(problem);
       break;

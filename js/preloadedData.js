@@ -21,7 +21,7 @@ const pg169p35 = {
 
 const CorrelationRegressionReview = {
   name: "Correlation and Regression Review",
-  img: "sample4.png",
+  img: "Review.png",
   x: [ 10,  8,  7,  7,  6,  2,  3,  5,  6,  8,  8, 10, 10,  9,  7,  6,  4,   6,  6, 10,  3,  9,  2,  8],
   y: [ 35, 61, 68, 39, 79, 94, 87, 81, 80, 57, 45, 44, 27, 47, 60, 85, 29, 100, 41, 37, 66, 72, 68, 80]
 };

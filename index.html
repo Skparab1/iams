@@ -3,7 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <meta name='og:viewport' content='width=device-width,initial-scale=1'>
-    <meta name="og:description" content="skparab1">
+    <meta name="og:description" content="OUND">
     <meta property="og:image" content="image">
     <title>Iams</title>
     <link rel="stylesheet" href="css/index.css">
@@ -40,8 +40,8 @@
         <h1>Point Table</h1>
         <table id="xytable" style="display: block; overflow: auto; margin-top: 0px; padding: 2%; width: fit-content; overflow-x: hidden;">
           <tr>
-            <th><input class="pointInput" type="text" name="woo" id="" value="X"></th>
-            <th><input class="pointInput" type="text" name="woo" id="" value="Y"></th>
+            <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">X</h1></th>
+            <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">Y</h1></th>
             <td style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; background-color: var(--contrast); cursor: pointer; border-radius: 25px; font-size: 75%; opacity: 0;">delete</p></td>
           </tr>
           <th id="pointaddbutton">
@@ -77,8 +77,9 @@
 
 
     <div class="largenotif" id="preferences" style="height: fit-content;">
+      <button class="exit-modal nohover" onclick="closeel('preferences');">&times</button>
       <h1 style="font-size: 25px;">Settings</h1>
-      <h3 style="font-size: 15px; margin-bottom: 5px; margin-top: 0px;" id="theme">Theme: (Dark)</h3>
+      <h3 style="font-size: 20px; margin-bottom: 5px; margin-top: 0px;" id="theme">Theme: (Dark)</h3>
       <label class="switch" onclick="toggletheme();">
         <input type="checkbox">
         <span class="slider round"></span>
@@ -88,20 +89,23 @@
     
 
     <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+      <button class="exit-modal nohover" onclick="closeel('instructions');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Click the graph or add points to the table to create data. Alternatively, use preloaded data or samples.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>2. Click the next button to view steps of the animation.</h5>
+      <h5 style='font-size: 20px; margin: 10px;'>1. Click the graph or add points to the table to create data. Alternatively, use preloaded data or samples.</h5>
+      <h5 style='font-size: 20px; margin: 10px;'>2. Click the next button to view steps of the animation.</h5>
       <div class="close" onclick="closeel('instructions'); closescreen();">Close</div>
     </div>
 
 
     <div class="largenotif" id="preloadedSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
+      <button class="exit-modal nohover" onclick="closeel('preloadedSelect');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>Select Preloaded Data</h1>
       
     </div>
 
 
   <div class="largenotif" id="testSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
+      <button class="exit-modal nohover" onclick="closeel('testSelect');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>Select Test Sample</h1>
   </div>
 
