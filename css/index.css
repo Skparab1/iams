@@ -527,3 +527,12 @@ input:checked + .slider:before {
 .exit-modal:hover {
   color: var(--main);
 }
+
+#pointgraph {
+  margin-bottom: 0;
+}
+
+#bfequation {
+  position: absolute; 
+  transform: translateX(-50%);
+}
