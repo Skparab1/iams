@@ -38,14 +38,14 @@
 
       <div class=halfwidth id="leftdisplay" style="padding-left: 20px;">
         <h1>Point Table</h1>
-        <table id="xytable" style="display: block; overflow: auto; margin-top: 0px; padding: 2%; width: fit-content; overflow-x: hidden;">
+        <table id="xytable" style="display: block; overflow: auto; margin-top: 0px; padding: 2%; width:fit-content;">
           <tr>
-            <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">X</h1></th>
-            <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">Y</h1></th>
+            <th><h1 class="pointInput xyCol">X</h1></th>
+            <th><h1 class="pointInput xyCol">Y</h1></th>
             <td style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; background-color: var(--contrast); cursor: pointer; border-radius: 25px; font-size: 75%; opacity: 0;">delete</p></td>
           </tr>
           <th id="pointaddbutton">
-            <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
+            <a><button id="addpoint" class=smallbtn onclick="addNewPoint();">Add Point</button></a>
           </th>
         </table> 
       </div>
@@ -64,12 +64,9 @@
           <input type="range" min="1" max="100" value="50" class="slider" id="myRange" style="transform: rotate(90deg);">
         </div>
       </div> -->
-    </div>
-
-      <div class="controlPanel" style="position: fixed;" onclick="nextAction();">
+    <div class="controlPanel" onclick="nextAction();">
       <div class="goarrow">
-        <h3 style="padding-left: 10%;">Next</h3>
-        <img src="https://static.vecteezy.com/system/resources/previews/023/790/891/original/right-arrow-icon-clipart-transparent-background-free-free-png.png" alt="black right pointing arrow" height="100%">
+        <h3 style="display:table-cell; vertical-align:middle">Next &#8594;</h3>
       </div>
     </div>
 

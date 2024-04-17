@@ -236,8 +236,8 @@ function redraw(pointgrow = null){
   xytable.innerHTML = `
   <tr>
     <tr>
-      <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">X</h1></th>
-      <th><h1 class="pointInput" style="border: none; text-align: center; font-size: 20px; width: 178px; margin: 0px;">Y</h1></th>
+      <th><h1 class="pointInput xyCol">X</h1></th>
+      <th><h1 class="pointInput xyCol">Y</h1></th>
     </tr>
   </tr>`;
 
@@ -267,7 +267,7 @@ function redraw(pointgrow = null){
 
   xytable.innerHTML += `<tr id="pointaddbutton">
     <th>
-      <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
+      <a><button class="smallbtn" id="addpoint" onclick="addNewPoint()";>Add Point</button></a>
     </th>
   </tr>`;
 
@@ -329,7 +329,7 @@ function redrawlite(){
 
   xytable.innerHTML += `<tr id="pointaddbutton">
     <th>
-      <a><button class=smallbtn style="margin-left: 100%; width: 50%; transform: translate(-50%,0);" onclick="addNewPoint();">Add Point</button></a>
+      <a><button class="smallbtn" id="addpoint" onclick="addNewPoint();">Add Point</button></a>
     </th>
   </tr>`;
 
