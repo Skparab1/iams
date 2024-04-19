@@ -26,5 +26,13 @@ const CorrelationRegressionReview = {
   y: [ 35, 61, 68, 39, 79, 94, 87, 81, 80, 57, 45, 44, 27, 47, 60, 85, 29, 100, 41, 37, 66, 72, 68, 80]
 };
 
+const pg675p14 = {
+  name: "Page 675, Problem 14",
+  img: "Review.png",
+  x: [ 1,     1,     3,     4,    4,     5,    5,    6,    7,    7,    8,    8,    10,   10,   13],
+  y: [ 13990, 13495, 12999, 9500, 10495, 8995, 9495, 6999, 6950, 7850, 5999, 5995, 4950, 4495, 2850]
+};
 
-const allPreloaded = [pg168p33, pg168p34, pg169p35, CorrelationRegressionReview];
+
+
+const allPreloaded = [pg168p33, pg168p34, pg169p35, CorrelationRegressionReview, pg675p14];
