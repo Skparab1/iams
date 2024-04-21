@@ -81,6 +81,7 @@
         <input type="checkbox">
         <span class="slider round"></span>
       </label>
+      <div class="close" onclick="openel('music');">Iams Music</div>
       <div class="close" onclick="closeel('preferences');">Close</div>
     </div>
     
@@ -89,7 +90,8 @@
       <button class="exit-modal nohover" onclick="closeel('instructions');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
       <h5 style='font-size: 20px; margin: 10px;'>1. Click the graph or add points to the table to create data. Alternatively, use preloaded data or samples.</h5>
-      <h5 style='font-size: 20px; margin: 10px;'>2. Click the next button to view steps of the animation.</h5>
+      <h5 style='font-size: 20px; margin: 10px;'>2. Modify points using the table or delete points by clicking them.</h5>
+      <h5 style='font-size: 20px; margin: 10px;'>3. Click the next button to view steps of the animation.</h5>
       <div class="close" onclick="closeel('instructions'); closescreen();">Close</div>
     </div>
 
@@ -101,12 +103,22 @@
     </div>
 
 
-  <div class="largenotif" id="testSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
-      <button class="exit-modal nohover" onclick="closeel('testSelect');">&times</button>
-      <h1 style='font-size: 25px; margin: 10px;'>Select Test Sample</h1>
-  </div>
+    <div class="largenotif" id="testSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
+        <button class="exit-modal nohover" onclick="closeel('testSelect');">&times</button>
+        <h1 style='font-size: 25px; margin: 10px;'>Select Test Sample</h1>
+    </div>
 
 
+    <div class="largenotif" id="music" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+      <button class="exit-modal nohover" onclick="closeel('music');">&times</button>
+      <h1 style='font-size: 25px; margin: 10px;'>Iams Music</h1>
+      <h5 style='font-size: 20px; margin: 10px;'>Listen to high quality Iams Music as you do your homework</h5>
+      <h5 style='font-size: 20px; margin: 10px; color: var(--main);'>"Iams" ft. Shubham and Abhishek by AGP</h5>
+      <audio src="abhishek ft shubham - iams.mp3" controls></audio>
+      <h5 style='font-size: 20px; margin: 10px; color: var(--main);'>"Stats" ft. Poisonpati by AGP</h5>
+      <audio src="poisonpati_-_stats.mp3" controls></audio>
+      <div class="close" onclick="closeel('music'); closescreen();">Close</div>
+    </div>
     
 
 

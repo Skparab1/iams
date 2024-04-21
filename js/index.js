@@ -31,7 +31,9 @@ let bestFitSlope = 0;
 
 let plotActive = true;
 
+// and i will proceed to use var ahem ritam
 var allowClick = true;
+var keyArr = ["", "", "", "", "", "", "", "", ""];
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
@@ -1427,3 +1429,30 @@ plotgraph.addEventListener("click", addpoint);
 plotgraph.addEventListener("mousemove", allowPointClick);
 
 
+window.addEventListener("keydown", (event) => {
+  if (event.isComposing || event.keyCode === 229) {
+    return;
+  }
+
+  let actkey = event.code.replace("Key","");
+
+  keyArr.push(actkey);
+  keyArr.shift();
+
+  console.log(keyArr);
+
+  let target = ["I", "A", "M", "S", "M", "U", "S", "I", "C"];
+
+  let i = 0;
+  let found = true;
+  while (i < target.length){
+    if (target[i] != keyArr[i]){
+      found = false;
+      break;
+    }
+    i += 1;
+  }
+  if (found){
+    openel("music");
+  }
+});
