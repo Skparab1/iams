@@ -1183,7 +1183,7 @@ async function shrinkPlots(){
 
 
 function closeOthers(thisEl){
-  let els = ["preloadedSelect", "testSelect", "preferences", "instructions"];
+  let els = ["preloadedSelect", "testSelect", "preferences", "instructions", "music"];
   for (el of els){
     if (document.getElementById(el).style.display == "block" && el != thisEl){
       closeel(el);
