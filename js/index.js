@@ -468,7 +468,7 @@ function glowPoint(num){
   let tickedBox = document.getElementById("tickedBox");
   tickedBox.style.width = pointsarr[num][0]/tickXincrement*10+0.7+"%";
   tickedBox.style.height = pointsarr[num][1]/tickYincrement*10+0.05+"%";
- 
+  
   console.log("scrolled called");
 
   if (step == 1){

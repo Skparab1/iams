@@ -326,6 +326,7 @@ tr {
   opacity: 0;
   z-index: 1000;
   transition: opacity 0.25s, display 0s, top 0.25s, background-color 0.25s;
+  padding-bottom: 10px;
 }
 
 .close {
@@ -333,9 +334,15 @@ tr {
   margin-left: 40%;
   background: var(--bg);
   color: var(--contrast);
-  border: 5px solid var(--main);
+  border: 4px solid var(--main);
+  border-radius: 5px;
   font-size: 20px;
+  transition: background-color 0.25s;
   cursor: pointer;
+}
+
+.close:hover {
+  background-color: var(--slight);
 }
 
 .exit-modal {
@@ -367,6 +374,7 @@ tr {
 
 .xyCol {
   border: 1px solid white;
+  /*border: 1px solid var(--bg);*/
 }
 
 /* totally not copied over from w3 lmfao */
@@ -450,7 +458,7 @@ input:checked + .slider:before {
   margin: 1.5%;
   height: 150px;
   background-color: var(--bgslight);
-  border-radius: 25px;
+  border-radius: 15px;
   cursor: pointer;
   opacity: 0.8;
   font-size: 37%;
@@ -526,4 +534,13 @@ input:checked + .slider:before {
 
 .exit-modal:hover {
   color: var(--main);
+}
+
+#pointgraph {
+  margin-bottom: 0;
+}
+
+#bfequation {
+  position: absolute; 
+  transform: translateX(-50%);
 }
