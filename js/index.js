@@ -31,6 +31,10 @@ let bestFitSlope = 0;
 
 let plotActive = true;
 
+// and i will proceed to use var ahem ritam
+var allowClick = true;
+var keyArr = ["", "", "", "", "", "", "", "", ""];
+
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 
@@ -142,13 +146,12 @@ async function growPoint(id){
   }
 } 
 
-
 function drawPoint(x, y, n, grow) {
   const num = n;
 
   [coordX, coordY] = getcoord(x,y);
 
-  plotgraph.innerHTML += `<div onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" id="realPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+  plotgraph.innerHTML += `<div onclick="allowClick = false; deletePoint(${num});" onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" id="realPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 
   if (grow){
     growPoint("realPoint"+num);
@@ -219,8 +222,8 @@ function drawTickX(x, y, i, push=true) {
 }
 
 
-function handlezoom(){
-  alert("scrolled");
+function allowPointClick(){
+  allowClick = true;
 }
 
 
@@ -373,7 +376,8 @@ function convertToPercentage(absoluteX, absoluteY){
 
 function addpoint(event){
 
-  if (!plotActive){
+  if (!plotActive || !allowClick){
+    allowPointClick();
     return;
   }
 
@@ -464,7 +468,7 @@ function glowPoint(num){
   let tickedBox = document.getElementById("tickedBox");
   tickedBox.style.width = pointsarr[num][0]/tickXincrement*10+0.7+"%";
   tickedBox.style.height = pointsarr[num][1]/tickYincrement*10+0.05+"%";
-
+  
   console.log("scrolled called");
 
   if (step == 1){
@@ -686,10 +690,37 @@ function nextAction(){
 }
 
 
+
+function previousAction(){
+  // steop will always be 2 or higher
+
+  if (step == 2){ // do the reverse of drawHistogram
+    reverseDrawHistogram();
+    plotgraph.style.cursor = "crosshair";
+    plotActive = true;
+  } else if (step == 2){
+    rotateHistogram();
+  } else if (step == 3){
+    tiltplotgraph();
+  } else if (step == 4){
+    drawResidualHistogram();
+  } else if (step == 5){
+    rotateResiduals();
+  } else if (step == 6){
+    shiftPanels();
+  } else if (step == 7){
+    shrinkPlots();
+  } else if (step == 8){
+
+  }
+  step -= 1;
+}
+
+
 async function movePoint(point, x, y){
   let nowX = point.offsetLeft;
   let nowY = point.offsetTop;
-  while (nowX > x+10){
+  while ((nowX > x+10 && nowX > x) || (nowX < x-2 && nowX < x)){
     point.style.left = nowX+"px";
     point.style.top = nowY+"px";
 
@@ -771,10 +802,92 @@ function drawHistogram(anim=true){
 
     pointNum += 1;
   }
-
 }
 
+function reverseDrawHistogram(anim=true){
 
+  // change this to xytable, then redraw xytable (MAY NEED TO GET THE ELEMENT AGAIN)
+  // leftDisp.innerHTML = `
+  // <h1 id="disthistlabel">Distribution Histogram</h1>
+  // <div id="horizontalHistogramPlot" class="horizontalHistogramPlot">
+  //   <h1 id="disthistlabelinternal"></h1>
+  // </div>`;
+
+  let pointNum = 0;
+  for (point of pointsarr){
+    // determine the category
+    let endPos = getcoordadded(point[0]/tickXincrement*10, point[1]/tickYincrement*10);
+
+    // alert(endPos);
+
+    let thePt = document.getElementById("movePoint"+pointNum);
+
+    if (anim){
+      movePoint(thePt, endPos[0], endPos[1]);
+    } else {
+      thePt.style.left = endPos[0]+"px";
+      thePt.style.top = endPos[1]+"px";
+    }
+
+    pointNum += 1;
+  }
+}
+
+function drawHistogram(anim=true){
+  leftDisp.innerHTML = `
+  <h1 id="disthistlabel">Distribution Histogram</h1>
+  <div id="horizontalHistogramPlot" class="horizontalHistogramPlot">
+    <h1 id="disthistlabelinternal"></h1>
+  </div>`;
+
+  histplot = document.getElementById("horizontalHistogramPlot");
+
+  drawTickHistogram(0, 0, 0);
+
+  let i = 1;
+  for (tick of tickYarr){
+    drawTickHistogram(tick[0], tick[1], i);
+    i += 1;
+  }
+
+  i = 0;
+  for (point of pointsarr){
+    duplicatePointDraw(point[0]/tickXincrement*10, point[1]/tickYincrement*10, i);
+    i += 1;
+  }
+
+
+  // calculate all the ending positions of each of the dots
+  let catPoints = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  let pointNum = 0;
+  for (point of pointsarr){
+    // determine the category
+
+    let i = 0;
+    while (i < 10){
+      console.log("point",point[1], tickYincrement*(i+1));
+      if (point[1] < tickYincrement*(i+1)){
+        let endPos = [(window.innerWidth*0.02*catPoints[i]), (histplot.offsetHeight-((0.1*i+0.05)*histplot.offsetHeight))];
+        catPoints[i] += 1;
+
+        let thePt = document.getElementById("movePoint"+pointNum);
+
+        if (anim){
+          movePoint(thePt, endPos[0], endPos[1]);
+        } else {
+          thePt.style.left = endPos[0]+"px";
+          thePt.style.top = endPos[1]+"px";
+        }
+
+        break;
+      }
+      i += 1;
+    }
+
+    pointNum += 1;
+  }
+}
 
 function drawResidualHistogram(anim=true){
   rightDisp.innerHTML = `
@@ -1070,7 +1183,7 @@ async function shrinkPlots(){
 
 
 function closeOthers(thisEl){
-  let els = ["preloadedSelect", "testSelect", "preferences", "instructions"];
+  let els = ["preloadedSelect", "testSelect", "preferences", "instructions", "music"];
   for (el of els){
     if (document.getElementById(el).style.display == "block" && el != thisEl){
       closeel(el);
@@ -1313,6 +1426,33 @@ displaySamples();
 
 window.addEventListener("resize", redraw);
 plotgraph.addEventListener("click", addpoint);
-plotgraph.addEventListener("scroll", handlezoom);
+plotgraph.addEventListener("mousemove", allowPointClick);
 
 
+window.addEventListener("keydown", (event) => {
+  if (event.isComposing || event.keyCode === 229) {
+    return;
+  }
+
+  let actkey = event.code.replace("Key","");
+
+  keyArr.push(actkey);
+  keyArr.shift();
+
+  console.log(keyArr);
+
+  let target = ["I", "A", "M", "S", "M", "U", "S", "I", "C"];
+
+  let i = 0;
+  let found = true;
+  while (i < target.length){
+    if (target[i] != keyArr[i]){
+      found = false;
+      break;
+    }
+    i += 1;
+  }
+  if (found){
+    openel("music");
+  }
+});
