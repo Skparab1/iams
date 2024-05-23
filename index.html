@@ -25,6 +25,7 @@
       <ul class="nav-items navcenter" id="nav">
         <li><a class="larget" onclick="openel('preloadedSelect');">Preloaded Data</a></li>
         <li><a class="larget" onclick="openel('testSelect');">Test Samples</a></li>
+        <li><a class="larget" onclick="createShareLink(); openel('shareData');">Share Data</a></li>
       </ul> 
       <ul class="nav-items navright">
         <li title="Settings"><a onclick="openel('preferences');"><img src="assets/settings.png" height="30px" class="logo"></a></li>
@@ -42,7 +43,7 @@
           <tr>
             <th><h1 class="pointInput xyCol">X</h1></th>
             <th><h1 class="pointInput xyCol">Y</h1></th>
-            <td style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; background-color: var(--contrast); cursor: pointer; border-radius: 25px; font-size: 75%; opacity: 0;">delete</p></td>
+            <td onclick="deleteAll();" style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; background-color: var(--contrast); cursor: pointer; border-radius: 25px; font-size: 75%;">Delete All</p></td>
           </tr>
           <th id="pointaddbutton">
             <a><button id="addpoint" class=smallbtn onclick="addNewPoint();">Add Point</button></a>
@@ -60,6 +61,7 @@
       <div class=halfwidth id="resdisp">
         <h1 id="pglabel">Residual Plot</h1>
         <div class='realres' id="realres">
+          <div id="realResRes" style="margin-top: -5%; opacity: 0;"></div>
           <div id="middleBox" class="middleBox"></div>
         </div>
       </div>
@@ -112,6 +114,12 @@
     <div class="largenotif" id="testSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
         <button class="exit-modal nohover" onclick="closeel('testSelect');">&times</button>
         <h1 style='font-size: 25px; margin: 10px;'>Select Test Sample</h1>
+    </div>
+
+    <div class="largenotif" id="shareData" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
+      <button class="exit-modal nohover" onclick="closeel('shareData');">&times</button>
+      <h1 style='font-size: 25px; margin: 10px;'>Share this link to transfer your data!</h1>
+      <h1 id="shareLink" style='font-size: 20px; margin: 10px;'></h1>
     </div>
 
 

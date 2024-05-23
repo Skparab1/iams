@@ -200,7 +200,7 @@ function duplicatePointDraw(x, y, n) {
 
   [coordX, coordY] = getcoordadded(x,y);
 
-  histplot.innerHTML += `<div id="movePoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+  histplot.innerHTML += `<span title="(${pointsarr[n][0].toFixed(2)},${pointsarr[n][1].toFixed(2)})"><div id="movePoint${num}" class=point onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" style="left: ${coordX}px; top: ${coordY}px;"></div></span>`;
 }
 
 function duplicatePointSecond(n) {
@@ -208,7 +208,7 @@ function duplicatePointSecond(n) {
 
   [coordX, coordY] = getcoordsecond("realResPoint"+n);
 
-  reshist.innerHTML += `<div id="resPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+  reshist.innerHTML += `<span title="(${pointsarr[n][0].toFixed(2)},${pointsarr[n][1].toFixed(2)}) Residual: ${residualArr[n].toFixed(2)}"><div id="resPoint${num}" class=point onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" style="left: ${coordX}px; top: ${coordY}px;"></div></span>`;
 }
 
 function duplicatePointRes(x, y, n) {
@@ -216,7 +216,7 @@ function duplicatePointRes(x, y, n) {
 
   [coordX, coordY] = getcoordTiltRes("realPoint"+n);
 
-  realres.innerHTML += `<div id="realResPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+  realres.innerHTML += `<span title="(${pointsarr[n][0].toFixed(2)},${pointsarr[n][1].toFixed(2)}) Residual: ${residualArr[n].toFixed(2)}"><div id="realResPoint${num}" class=point onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" style="left: ${coordX}px; top: ${coordY}px;"></div></span>`;
 }
 
 
@@ -335,7 +335,7 @@ function drawResid(x, y, num){
 
 
 
-function drawResidReal(num){
+async function drawResidReal(num){
 
   let resid = residualArr[num]
 
@@ -366,8 +366,9 @@ function drawResidReal(num){
 
   residualArr.push(resid);
 
+  let realResRes = document.getElementById("realResRes");
 
-  realres.innerHTML += `
+  realResRes.innerHTML += `
   <div id="residualLine${num}" class=residualLine style="width: ${w}; height: ${h}; bottom: ${offsetuse}"></div>`;
 
 }
@@ -392,6 +393,7 @@ function redraw(pointgrow = null){
     <tr>
       <th><h1 class="pointInput xyCol">X</h1></th>
       <th><h1 class="pointInput xyCol">Y</h1></th>
+      <td onclick="deleteAll();" style="border-radius: 0px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%;">Delete All</p></td>
     </tr>
   </tr>`;
 
@@ -537,6 +539,8 @@ function addpoint(event){
 
   drawBestFit();
 
+  saveData();
+
   redrawlite();
 }
 
@@ -545,6 +549,8 @@ function addpointResource(x, y){
 
   let newpts = [x,y];
   pointsarr.push(newpts);
+
+  console.log(pointsarr);
 
   drawBestFit();
 
@@ -573,6 +579,8 @@ function monitorChange(pointNum){
   drawBestFit();
 
   redraw();
+
+  saveData();
 }
 
 function checkForChange(){
@@ -610,11 +618,32 @@ function addToTable(x,y,index){
 }
 
 
+function lightenPoint(id){
+  try {
+    let thePoint = document.getElementById(id);
+    thePoint.style.backgroundColor = "red";
+    thePoint.style.zIndex = 10;
+  } catch (error) {
+    // probably doesnt matter
+  }
+}
+
+function darkenPoint(id){
+  try {
+    let thePoint = document.getElementById(id);
+    thePoint.style.backgroundColor = "#0d6efd";
+    thePoint.style.zIndex = 1;
+  } catch (error) {
+    // probably doesnt matter
+  }
+}
+
 function glowPoint(num){
-  // document.getElementById("tablerow"+num).style.backgroundColor = "red";
-  let thePoint = document.getElementById("realPoint"+num);
-  thePoint.style.backgroundColor = "red";
-  thePoint.style.zIndex = 10;
+  lightenPoint("realPoint"+num);
+  lightenPoint("movePoint"+num);
+  lightenPoint("realResPoint"+num);
+  lightenPoint("resPoint"+num);
+
 
   let tickedBox = document.getElementById("tickedBox");
   tickedBox.style.width = pointsarr[num][0]/tickXincrement*10+0.7+"%";
@@ -639,9 +668,10 @@ function glowPoint(num){
 
 function revertPoint(num){
 
-  let thePoint = document.getElementById("realPoint"+num);
-  thePoint.style.backgroundColor = "#0d6efd";
-  thePoint.style.zIndex = 1;
+  darkenPoint("realPoint"+num);
+  darkenPoint("movePoint"+num);
+  darkenPoint("realResPoint"+num);
+  darkenPoint("resPoint"+num);
 
   let tickedBox = document.getElementById("tickedBox");
 
@@ -666,6 +696,8 @@ async function addNewPoint(){
 
   xytable.scrollTo({ top: beforeScroll, behavior: 'instant' });
 
+  saveData();
+
   // ok effect but looks kind of cheap
   // not sure if i want to invest in a glow
   // glowPoint(pointsarr.length-1);
@@ -685,6 +717,8 @@ function deletePoint(num){
 
   drawBestFit();
   redraw();
+
+  saveData();
 
   console.log(beforeScroll);
 
@@ -1000,7 +1034,7 @@ function reverseDrawHistogram(anim=true){
 
 
 
-function drawResidualPlot(anim=true){
+async function drawResidualPlot(anim=true){
   realres = document.getElementById("realres");
 
   document.body.style.overflowX = "scroll";
@@ -1026,8 +1060,6 @@ function drawResidualPlot(anim=true){
   while (i < pointsarr.length){
     duplicatePointRes(pointsarr[i][0]/tickXincrement*10, residualArr[i]/tickYincrement*10+50, i);
     drawResidReal(i);
-
-
     // const num = i;
 
     // const endPos = [pointsarr[num][0]/tickXincrement*10, residualArr[num]/tickYincrement*10+50];
@@ -1052,6 +1084,16 @@ function drawResidualPlot(anim=true){
     movePointResidual(thePt, endPos[0]/100*realres.offsetHeight, endPos[1]/100*realres.offsetHeight);
 
     pointNum += 1;
+  }
+
+  let realResRes = document.getElementById("realResRes");
+
+  i = 0;
+  while (i < 100){
+    realResRes.style.opacity = i/100;
+
+    await sleep();
+    i += 0.18;
   }
 }
 
@@ -1298,8 +1340,53 @@ async function shrinkPlots(){
 
   let endPanel = document.getElementById("endpanel");
 
-  endPanel.innerHTML = `<div class="endexplain">r² = 1 - </div> <div class="endplot" id="destination1" style="border-bottom: 4px solid var(--contrast);"></div> <div class="endplot" id="destination2"></div><div class="summary">
-  R² = 1 - (Variance of residuals)/(variance of y values) = 1 - (SD of residuals)²/(SD of y values)² = 1 - (${(sdResiduals*sdResiduals).toFixed(2)})/(${(sdY*sdY).toFixed(2)}) = 1 - ${(sdResiduals*sdResiduals/(sdY*sdY)).toFixed(2)}  = ${(1-(sdResiduals*sdResiduals/(sdY*sdY))).toFixed(2)}
+  endPanel.innerHTML = `<div class="endexplain">R² = 1 - </div> <div class="endplot" id="destination1" style="border-bottom: 4px solid var(--contrast);"></div> <div class="endplot" id="destination2"></div><div class="summary">
+  
+  R² is the variability in y-values explained by the variability in x-values. The residuals represent the variability in y-values that is not explained by variability in x-values.
+  Therefore, the variance of the residuals over the variance of the y values represents the proportion of the variability in y-values that is not explained by the variability in x-values.
+  1 - this value leads to R².
+
+  <br>
+  <br>
+  
+  R² = 1 - 
+  <span class=fractionContainer>
+    <span class="red">(Variance of residuals)</span>
+    <span class=fractionInternal>(variance of y values)</span>
+  </span>
+
+  <br>
+
+  R² = 1 - 
+  <span class=fractionContainer>
+    <span class="red">(SD of residuals)²</span>
+    <span class=fractionInternal>(SD of y values)²</span>
+  </span>
+
+  <br>
+
+  R² = 1 - 
+  <span class=fractionContainer>
+    <span class="red">(${(sdResiduals).toFixed(2)})²</span>
+    <span class=fractionInternal>(${(sdY).toFixed(2)})²</span>
+  </span>
+
+  <br>
+
+  R² = 1 - 
+  <span class=fractionContainer>
+    <span class="red">(${(sdResiduals*sdResiduals).toFixed(2)})</span>
+    <span class=fractionInternal>(${(sdY*sdY).toFixed(2)})</span>
+  </span>
+
+  <br>
+
+  R² = 1 - ${(sdResiduals*sdResiduals/(sdY*sdY)).toFixed(2)}
+
+  <br>
+
+  R² = ${(1-(sdResiduals*sdResiduals/(sdY*sdY))).toFixed(2)}
+  
   </div>`; 
 
 
@@ -1338,6 +1425,8 @@ async function shrinkPlots(){
     i += 1;
   }
 
+  await squarePlots();
+
 }
 
 
@@ -1358,7 +1447,7 @@ function calcStats(){
 }
 
 
-function squarePlots(){
+async function squarePlots(){
 
   let scaledSdRes = sdResiduals/tickYincrement*10;
   let scaledMeanRes = meanResiduals/tickYincrement*10;
@@ -1504,6 +1593,34 @@ function usePreloadedData(data){
   drawBestFit();
   redraw();
 
+  saveData();
+
+  console.log(pointsarr);
+}
+
+
+function useSavedData(dataX, dataY){
+
+  pointsarr = [];
+  tickXincrement = 1;
+  tickYincrement = 1;
+  redraw();
+
+  let i = 0;
+  while (i < dataX.length){
+    addpointResource(parseFloat(dataX[i]),parseFloat(dataY[i]));
+    console.log(pointsarr);
+
+    // pointsarr.push([data.x[i],data.y[i]]);
+    i += 1;
+  }
+
+  checkForChange();
+  drawBestFit();
+  redraw();
+
+  saveData();
+
   console.log(pointsarr);
 }
 
@@ -1527,7 +1644,16 @@ function getRandomData(){
   }
 }
 
-function selectProblem(nm){
+async function selectProblem(nm){
+
+  if (step > 2){
+    if (window.confirm("Changing datasets will erase your current progress. Are you sure you want to continue?")) {
+      
+    } else {
+      return;
+    }
+  }
+  
   for (problem of allPreloaded){
     if (problem.name == nm){
       usePreloadedData(problem);
@@ -1543,6 +1669,14 @@ function selectProblem(nm){
       usePreloadedData(problem);
       break;
     }
+  }
+
+  saveData();
+
+
+
+  if (step > 2){
+    location.reload();
   }
 }
 
@@ -1605,10 +1739,110 @@ function displaySamples(){
 }
 
 
+function saveData(){
+  let stringX = "";
+  let stringY = "";
+
+  let i = 0;
+  for (point of pointsarr){
+    stringX += point[0];
+    stringY += point[1];
+
+    if (i != pointsarr.length-1){
+      stringX += ",";
+      stringY += ",";
+    }
+
+    i += 1;
+  }
+
+  localStorage.setItem("IamsPointsX",stringX);
+  localStorage.setItem("IamsPointsY",stringY);
+}
+
+
+function deleteAll(){
+  pointsarr = [];
+  saveData();
+  location.reload();
+}
+
+
+function createShareLink(){
+  let sl = document.getElementById("shareLink");
+
+  let lnk = "";
+
+  let stringX = "";
+  let stringY = "";
+
+  let i = 0;
+  for (point of pointsarr){
+    stringX += point[0].toFixed(2);
+    stringY += point[1].toFixed(2);
+
+    if (i != pointsarr.length-1){
+      stringX += ",";
+      stringY += ",";
+    }
+  }
+
+  stringX = stringX.substring(0, stringX.length-1);
+  stringY = stringY.substring(0, stringY.length-1);
+
+
+  lnk = window.location.href + "?X=" + stringX + "&Y=" + stringY;
+
+  sl.textContent = lnk;
+}
+
 // load the settings from localstorage
 let theme = localStorage.getItem('bttheme');
 let angle = localStorage.getItem('btangle');
 let demospeed = localStorage.getItem('btspeed');
+let loadX = localStorage.getItem("IamsPointsX");
+let loadY = localStorage.getItem("IamsPointsY");
+
+
+let ur = window.location.href;
+
+if (ur.includes("?")){
+  if (window.confirm("Using this dataset will erase your current data. Do you want to continue?")) {
+    let splt = ur.split("?");
+    ur = splt[0];
+    splt = splt[1].split("&");
+    let extractedX = splt[0].replace("X=","");
+    let extractedY = splt[1].replace("Y=","");
+
+    extractedY = extractedY.substring(0, extractedY.length-1);
+    extractedX = extractedX.substring(0, extractedX.length-1);
+
+
+    localStorage.setItem("IamsPointsX",extractedX);
+    localStorage.setItem("IamsPointsY",extractedY);
+  }
+
+  window.open(ur,"_self");
+} else {
+  if (loadX != null && loadY != null){
+    loadX = loadX.split(",");
+    loadY = loadY.split(",");
+  
+    useSavedData(loadX, loadY);
+  }  
+}
+
+
+
+
+
+if (loadX == null || loadX == "" || loadX == NaN){
+  pointsarr = [];
+  redraw();
+}
+
+
+
 
 let lasttoggle = new Date();
 

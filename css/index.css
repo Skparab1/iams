@@ -576,3 +576,23 @@ input:checked + .slider:before {
   color: var(--contrast);
   font: 20px;
 }
+
+
+.fractionContainer {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+}
+
+.fractionInternal {
+  border-top: 1px solid var(--contrast);
+  color: rgb(0, 174, 255);
+}
+
+.red {
+  color: red;
+}
+
+.blue {
+  color: rgb(0, 174, 255);
+}
