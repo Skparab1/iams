@@ -1487,7 +1487,7 @@ async function squarePlots(){
 
 
 function closeOthers(thisEl){
-  let els = ["preloadedSelect", "testSelect", "preferences", "instructions", "music"];
+  let els = ["preloadedSelect", "testSelect", "preferences", "instructions", "music", "shareData"];
   for (el of els){
     if (document.getElementById(el).style.display == "block" && el != thisEl){
       closeel(el);
@@ -1756,6 +1756,9 @@ function saveData(){
     i += 1;
   }
 
+  stringX = stringX.substring(0, stringX.length-1);
+  stringY = stringY.substring(0, stringY.length-1);
+
   localStorage.setItem("IamsPointsX",stringX);
   localStorage.setItem("IamsPointsY",stringY);
 }
@@ -1807,10 +1810,15 @@ let loadY = localStorage.getItem("IamsPointsY");
 let ur = window.location.href;
 
 if (ur.includes("?")){
+
+  let splt = ur.split("?");
+  ur = splt[0];
+  splt = splt[1].split("&");
+
+  openel("loading");
+
   if (window.confirm("Using this dataset will erase your current data. Do you want to continue?")) {
-    let splt = ur.split("?");
-    ur = splt[0];
-    splt = splt[1].split("&");
+    openel("loading");
     let extractedX = splt[0].replace("X=","");
     let extractedY = splt[1].replace("Y=","");
 
