@@ -20,6 +20,7 @@ let leftDisp = document.getElementById("leftdisplay");
 let rightDisp = document.getElementById("rightdisplay");
 let histplot = document.getElementById("horizontalHistogramPlot");
 let reshist = document.getElementById("residualHistogram");
+let realres = document.getElementById("realres");
 
 
 window.scrollTo({ left: 0, behavior: 'smooth' })
@@ -34,6 +35,12 @@ let plotActive = true;
 // and i will proceed to use var ahem ritam
 var allowClick = true;
 var keyArr = ["", "", "", "", "", "", "", "", ""];
+
+var storea;
+var storeb;
+var residualArr = [];
+
+var sdResiduals, sdY, meanResiduals, meanY;
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
@@ -61,6 +68,24 @@ function getcoordadded(percentX, percentY) {
 }
 
 function getcoordsecond(id) {
+
+
+  var element = document.getElementById(id);
+
+  let retx = element.offsetLeft;
+
+  let rety = element.offsetTop;
+  
+  retx -= (reshist.getBoundingClientRect().left-realres.getBoundingClientRect().left);
+
+  retx += realres.offsetWidth/5;
+
+  return [retx, rety];
+}
+
+
+
+function getcoordTiltRes(id) {
 
   // let oldx = percentX/100*plotgraph.offsetWidth+1.5-(reshist.offsetLeft-plotgraph.offsetLeft);
   // let oldy = (1-(percentY/100))*plotgraph.offsetHeight+1.5;
@@ -93,13 +118,13 @@ function getcoordsecond(id) {
   var leftPos = element.getBoundingClientRect().left + window.scrollX;
 
   let x = -(leftPos - histplot.offsetLeft);
-  let y = topPos - histplot.offsetTop+histplot.offsetHeight*0.1875;
+  let y = topPos - histplot.offsetTop+histplot.offsetHeight*0.035;
 
   // reflect
   x += (-(histplot.offsetLeft-plotgraph.offsetLeft)-x)*2;
 
   // translate
-  x -= window.innerWidth*1.91;
+  x -= window.innerWidth*1.94;
 
   return [x, y];
 }
@@ -126,6 +151,18 @@ function getcoordResidual(percentX, percentY) {
   return [x,y];
 }
 
+function getcoordRealRes(percentX, percentY) {
+
+  // let x = histplot.offsetLeft+percentX/100*histplot.offsetWidth+1.5;
+  // let y = histplot.offsetTop+(1-(percentY/100))*histplot.offsetHeight+1.5;
+
+  let x = percentX/100*realres.offsetWidth+1.5;
+  let y = (1-(percentY/100))*realres.offsetHeight+1.5;
+
+  return [x,y];
+}
+
+
 function goodNumber(num){
   if (num < 100){
     return "&nbsp&nbsp"+String(num);
@@ -151,7 +188,7 @@ function drawPoint(x, y, n, grow) {
 
   [coordX, coordY] = getcoord(x,y);
 
-  plotgraph.innerHTML += `<div onclick="allowClick = false; deletePoint(${num});" onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" id="realPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+  plotgraph.innerHTML += `<span title="(${pointsarr[n][0].toFixed(2)},${pointsarr[n][1].toFixed(2)})"><div onclick="allowClick = false; deletePoint(${num});" onmouseover="glowPoint(${num});" onmouseout="revertPoint(${num});" id="realPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div></span>`;
 
   if (grow){
     growPoint("realPoint"+num);
@@ -169,10 +206,19 @@ function duplicatePointDraw(x, y, n) {
 function duplicatePointSecond(n) {
   const num = n;
 
-  [coordX, coordY] = getcoordsecond("realPoint"+n);
+  [coordX, coordY] = getcoordsecond("realResPoint"+n);
 
   reshist.innerHTML += `<div id="resPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 }
+
+function duplicatePointRes(x, y, n) {
+  const num = n;
+
+  [coordX, coordY] = getcoordTiltRes("realPoint"+n);
+
+  realres.innerHTML += `<div id="realResPoint${num}" class=point style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+}
+
 
 
 
@@ -206,7 +252,31 @@ function drawTickRes(x, y, i) {
   const num = i;
 
   reshist.innerHTML += `
+    <div id="resLabel${num}" class=tickLabel style="left: ${coordX-0.035*window.innerWidth}px; top: ${coordY-9.75}px;">${goodNumber(Math.round((y*(tickYincrement/10))-tickYincrement*5))}</div>
     <div id="resTick${num}" class=tickY style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+}
+
+
+function drawTickRealRes(x, y, i) {
+
+  [coordX, coordY] = getcoordRealRes(x,y);
+
+  const num = i;
+
+  realres.innerHTML += `
+    <div id="resLabel${num}" class=tickLabel style="left: ${coordX-0.035*window.innerWidth}px; top: ${coordY-9.75}px;">${goodNumber(Math.round((y*(tickYincrement/10))-tickYincrement*5))}</div>
+    <div id="resTick${num}" class=tickY style="left: ${coordX}px; top: ${coordY}px;"></div>`;
+}
+
+function drawTickRealResX(x, y, i) {
+
+  [coordX, coordY] = getcoordRealRes(x,y);
+
+  const num = i;
+
+  realres.innerHTML += `
+  <div id="resLabel${num}" class=tickLabel style="left: ${coordX-7.75}px; top: ${coordY+0.015*window.innerHeight}px;">${Math.round(x*(tickXincrement/10))}</div>
+  <div id="resTickX${num}" class=tickX style="left: ${coordX}px; top: ${coordY}px;"></div>`;
 }
 
 function drawTickX(x, y, i, push=true) {
@@ -219,6 +289,87 @@ function drawTickX(x, y, i, push=true) {
   plotgraph.innerHTML += `
   <div id="labelX${i}" class=tickLabel style="left: ${coordX-7.75}px; top: ${coordY}px;">${Math.round(x*(tickXincrement/10))}</div>
   <div id="tickX${i}" class=tickX style="left: ${coordX}px; top: ${coordY-0.017*plotgraph.offsetHeight}px;"></div>`;
+}
+
+function drawResid(x, y, num){
+
+  console.log("in resid");
+  
+  let [coordX, coordY] = getcoord(x,y);
+
+  let resid = pointsarr[num][1] - ySolution(pointsarr[num][0]);
+
+  const w = pointsarr[num][0]/tickXincrement*10+0.7+"%";
+  let storeh = resid/tickYincrement*10+0.05;
+  //const h = (resid/tickYincrement*10+0.05)+"%";
+
+  // alert(storeh, resid);
+
+  let offset;
+
+  if (resid >= 0){
+    offset = ySolution(pointsarr[num][0])/tickYincrement*10-1+"%";
+  } else {
+    storeh = -storeh;
+
+    offset = pointsarr[num][1]/tickYincrement*10-1+"%";
+  }
+
+  storeh = storeh + "%";
+
+
+  const h = storeh;
+
+  const offsetuse = offset;
+
+  console.log("middle of resid");
+
+  residualArr.push(resid);
+
+
+  plotgraph.innerHTML += `
+  <div id="residualLine${num}" class=residualLine style="width: ${w}; height: ${h}; bottom: ${offsetuse}"></div>`;
+
+}
+
+
+
+
+function drawResidReal(num){
+
+  let resid = residualArr[num]
+
+  const w = pointsarr[num][0]/tickXincrement*10+0.7+"%";
+  let storeh = resid/tickYincrement*10+0.05;
+  //const h = (resid/tickYincrement*10+0.05)+"%";
+
+  // alert(storeh, resid);
+
+  let offset;
+
+  if (resid >= 0){
+    offset = 50-2+"%";
+  } else {
+
+    storeh = -storeh;
+    offset = 50-2+resid/tickYincrement*10+"%";
+  }
+
+  storeh = storeh + "%";
+
+
+  const h = storeh;
+
+  const offsetuse = offset;
+
+  console.log("middle of resid");
+
+  residualArr.push(resid);
+
+
+  realres.innerHTML += `
+  <div id="residualLine${num}" class=residualLine style="width: ${w}; height: ${h}; bottom: ${offsetuse}"></div>`;
+
 }
 
 
@@ -468,7 +619,6 @@ function glowPoint(num){
   let tickedBox = document.getElementById("tickedBox");
   tickedBox.style.width = pointsarr[num][0]/tickXincrement*10+0.7+"%";
   tickedBox.style.height = pointsarr[num][1]/tickYincrement*10+0.05+"%";
-  
   console.log("scrolled called");
 
   if (step == 1){
@@ -611,7 +761,7 @@ function bestFit(allPoints){
 
   i = 0;
   while (i < pointsarr.length){
-    regressionSquaredError += Math.pow((pointsarr[i][1]-ySolution(a, b, pointsarr[i][0])), 2);
+    regressionSquaredError += Math.pow((pointsarr[i][1]-ySolution(pointsarr[i][0])), 2);
     totalSquaredError += Math.pow((pointsarr[i][1]-meanY), 2);
     i += 1;
   }
@@ -638,9 +788,17 @@ function bestFit(allPoints){
   return [a, b]
 }
 
-function ySolution(a, b, x){
-  return a * x + b;
+function ySolution(x){
+  return storea * x + storeb;
 }
+
+
+function getStandardDeviation (array) {
+  const n = array.length
+  const mean = array.reduce((a, b) => a + b) / n
+  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+}
+
 
 function drawBestFit(){
 
@@ -650,12 +808,15 @@ function drawBestFit(){
 
   let [a, b] = bestFit(pointsarr);
 
+  storea = a;
+  storeb = b;
+
 
   let plotx1 = 0;
-  let ploty1 = Math.round(plotgraph.offsetHeight-(ySolution(a, b, 0)/tickYincrement*10)*0.01*plotgraph.offsetHeight);
+  let ploty1 = Math.round(plotgraph.offsetHeight-(ySolution(0)/tickYincrement*10)*0.01*plotgraph.offsetHeight);
 
   let plotx2 = plotgraph.offsetWidth;
-  let ploty2 = Math.round(plotgraph.offsetHeight-(ySolution(a, b, tickXincrement*10)/tickYincrement*10)*0.01*plotgraph.offsetHeight);
+  let ploty2 = Math.round(plotgraph.offsetHeight-(ySolution(tickXincrement*10)/tickYincrement*10)*0.01*plotgraph.offsetHeight);
 
 
   plotgraph.innerHTML += `
@@ -676,45 +837,47 @@ function nextAction(){
   } else if (step == 3){
     tiltplotgraph();
   } else if (step == 4){
-    drawResidualHistogram();
+    drawResidualPlot();
   } else if (step == 5){
-    rotateResiduals();
+    drawResidualHistogram();
   } else if (step == 6){
-    shiftPanels();
+    rotateResiduals();
   } else if (step == 7){
-    shrinkPlots();
+    shiftPanels();
   } else if (step == 8){
-
+    shrinkPlots();
+  } else if (step == 9){
+    squarePlots();
   }
   step += 1;
 }
 
 
+//NOOOOOOOTTT
+// function previousAction(){
+//   // steop will always be 2 or higher
 
-function previousAction(){
-  // steop will always be 2 or higher
-
-  if (step == 2){ // do the reverse of drawHistogram
-    reverseDrawHistogram();
-    plotgraph.style.cursor = "crosshair";
-    plotActive = true;
-  } else if (step == 2){
-    rotateHistogram();
-  } else if (step == 3){
-    tiltplotgraph();
-  } else if (step == 4){
-    drawResidualHistogram();
-  } else if (step == 5){
-    rotateResiduals();
-  } else if (step == 6){
-    shiftPanels();
-  } else if (step == 7){
-    shrinkPlots();
-  } else if (step == 8){
-
-  }
-  step -= 1;
-}
+//   if (step == 2){ // do the reverse of drawHistogram
+//     reverseDrawHistogram();
+//     plotgraph.style.cursor = "crosshair";
+//     plotActive = true;
+//   } else if (step == 2){
+//     rotateHistogram();
+//   } else if (step == 3){
+//     tiltplotgraph();
+//   } else if (step == 4){
+//     drawResidualHistogram();
+//   } else if (step == 5){
+//     rotateResiduals();
+//   } else if (step == 6){
+//     shiftPanels();
+//   } else if (step == 7){
+//     shrinkPlots();
+//   } else if (step == 8){
+//     squarePlots();
+//   }
+//   step -= 1;
+// }
 
 
 async function movePoint(point, x, y){
@@ -735,12 +898,12 @@ async function movePoint(point, x, y){
 async function movePointResidual(point, x, y){
   let nowX = point.offsetLeft;
   let nowY = point.offsetTop;
-  while (nowX < x-10){
+  while (nowX < x){
     point.style.left = nowX+"px";
     point.style.top = nowY+"px";
 
-    nowX += (x-nowX)/100;
-    nowY += (y-nowY)/100;
+    nowX += (x-nowX+10)/100;
+    nowY += (y-nowY+10)/100;
 
     await sleep();
   }
@@ -749,6 +912,7 @@ async function movePointResidual(point, x, y){
 
 
 function drawHistogram(anim=true){
+
   leftDisp.innerHTML = `
   <h1 id="disthistlabel">Distribution Histogram</h1>
   <div id="horizontalHistogramPlot" class="horizontalHistogramPlot">
@@ -768,6 +932,7 @@ function drawHistogram(anim=true){
   i = 0;
   for (point of pointsarr){
     duplicatePointDraw(point[0]/tickXincrement*10, point[1]/tickYincrement*10, i);
+    drawResid(point[0]/tickXincrement*10, point[1]/tickYincrement*10, i);
     i += 1;
   }
 
@@ -833,57 +998,58 @@ function reverseDrawHistogram(anim=true){
   }
 }
 
-function drawHistogram(anim=true){
-  leftDisp.innerHTML = `
-  <h1 id="disthistlabel">Distribution Histogram</h1>
-  <div id="horizontalHistogramPlot" class="horizontalHistogramPlot">
-    <h1 id="disthistlabelinternal"></h1>
-  </div>`;
 
-  histplot = document.getElementById("horizontalHistogramPlot");
 
-  drawTickHistogram(0, 0, 0);
+function drawResidualPlot(anim=true){
+  realres = document.getElementById("realres");
+
+  document.body.style.overflowX = "scroll";
+  window.scrollTo({ left: window.innerWidth/2, behavior: 'smooth' })
+
+
+
+  drawTickRealRes(0, 0, 0);
 
   let i = 1;
   for (tick of tickYarr){
-    drawTickHistogram(tick[0], tick[1], i);
+    drawTickRealRes(tick[0], tick[1], i);
+    i += 1;
+  }
+
+  i = 1;
+  for (tick of [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]){
+    drawTickRealResX(tick, 50, i);
     i += 1;
   }
 
   i = 0;
-  for (point of pointsarr){
-    duplicatePointDraw(point[0]/tickXincrement*10, point[1]/tickYincrement*10, i);
+  while (i < pointsarr.length){
+    duplicatePointRes(pointsarr[i][0]/tickXincrement*10, residualArr[i]/tickYincrement*10+50, i);
+    drawResidReal(i);
+
+
+    // const num = i;
+
+    // const endPos = [pointsarr[num][0]/tickXincrement*10, residualArr[num]/tickYincrement*10+50];
+    // const thePt = document.getElementById("realResPoint"+num);
+    // movePointResidual(thePt, endPos[0], endPos[1]);
     i += 1;
   }
 
 
-  // calculate all the ending positions of each of the dots
-  let catPoints = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  // let endCoordinates = [pointsarr[i][0]/tickXincrement*10, residualArr[i]/tickYincrement*10+50];
 
+
+  // calculate all the ending positions of each of the dots
   let pointNum = 0;
   for (point of pointsarr){
-    // determine the category
+    
+    let endPos = [pointsarr[pointNum][0]/tickXincrement*10, residualArr[pointNum]/tickYincrement*10+50];
 
-    let i = 0;
-    while (i < 10){
-      console.log("point",point[1], tickYincrement*(i+1));
-      if (point[1] < tickYincrement*(i+1)){
-        let endPos = [(window.innerWidth*0.02*catPoints[i]), (histplot.offsetHeight-((0.1*i+0.05)*histplot.offsetHeight))];
-        catPoints[i] += 1;
+    endPos[1] = -endPos[1]+100;
 
-        let thePt = document.getElementById("movePoint"+pointNum);
-
-        if (anim){
-          movePoint(thePt, endPos[0], endPos[1]);
-        } else {
-          thePt.style.left = endPos[0]+"px";
-          thePt.style.top = endPos[1]+"px";
-        }
-
-        break;
-      }
-      i += 1;
-    }
+    let thePt = document.getElementById("realResPoint"+pointNum);
+    movePointResidual(thePt, endPos[0]/100*realres.offsetHeight, endPos[1]/100*realres.offsetHeight);
 
     pointNum += 1;
   }
@@ -931,13 +1097,15 @@ function drawResidualHistogram(anim=true){
 
     // convert it
 
-    let percentTop = (actualTop-reshist.offsetTop+reshist.offsetHeight*0.125)/reshist.offsetHeight;
-
-    console.log("PERCENT TOP"+percentTop);
+    // let percentTop = (actualTop-reshist.offsetTop+reshist.offsetHeight*0.125)/reshist.offsetHeight;
 
     let i = 0;
     while (i < 10){
-      if (percentTop < i/10){
+      // determine if this is the correct level for it
+
+      let checklevel = -(i-5)*tickYincrement;
+
+      if (residualArr[pointNum] > checklevel){
         let endPos = [(window.innerWidth*0.02*catPoints[i]+reshist.offsetWidth*0.05), reshist.offsetHeight*((i-0.5)/10)];
         catPoints[i] += 1;
 
@@ -958,6 +1126,7 @@ function drawResidualHistogram(anim=true){
     pointNum += 1;
   }
 }
+
 
 
 
@@ -1048,11 +1217,14 @@ async function shiftPanels(){
 
   let pglabel = document.getElementById("pglabel");
   let mdisp = document.getElementById("middledisplay");
+  let rsdisp = document.getElementById("resdisp");
+
 
   window.scrollTo({ left: 0, behavior: 'smooth' })
 
   while (i < 100){
     plotgraph.style.opacity = (100-i)/100;
+    rsdisp.style.opacity = (100-i)/100;
     pglabel.style.opacity = (100-i)/100;
     await sleep();
     i += 1;
@@ -1063,6 +1235,7 @@ async function shiftPanels(){
   i = 33
   while (i > 0){
     mdisp.style.width = i+"%";
+    rsdisp.style.width = i+"%";
     await sleep();
     i -= 1;
   }
@@ -1081,12 +1254,18 @@ async function shiftPanels(){
   rh = document.getElementById("reshistlabelinternal");
   dh = document.getElementById("disthistlabelinternal");
 
-  rh.style.transform = "rotate(90deg) translate(45% ,-50%)";
-  dh.style.transform = "rotate(90deg) translate(45% ,-300%)";
+  rh.style.transform = "rotate(90deg) translate(30% , 200%)";
+  dh.style.transform = "rotate(90deg) translate(45% , 15%)";
 
 
-  rh.textContent = "Variability explained by the model"
-  dh.textContent = "Initial variability of data"
+  rh.innerHTML = "Variability of residuals";
+  dh.innerHTML = "Variability of y-values";
+
+  calcStats();
+
+  rh.innerHTML += `<br><span class='bfequation' id='bfequation'>Mean: ${meanResiduals.toFixed(2)} • SD: ${sdResiduals.toFixed(2)}</span>`
+  dh.innerHTML += `<br><span class='bfequation' id='bfequation'>Mean: ${meanY.toFixed(2)} • SD: ${sdY.toFixed(2)}</span>`
+
 
   i = 0
   while (i < 100){
@@ -1104,7 +1283,7 @@ async function shrinkPlots(){
   let startTransHist = histplot.style.transform;
 
 
-  while (i > 50){
+  while (i > 60){
 
     reshist.style.transform = startTransRes + "scale("+i/100+")";
     histplot.style.transform = startTransHist + "scale("+i/100+")";
@@ -1119,7 +1298,9 @@ async function shrinkPlots(){
 
   let endPanel = document.getElementById("endpanel");
 
-  endPanel.innerHTML = `<div class="endexplain">r² = 1 - </div> <div class="endplot" id="destination1" style="border-bottom: 4px solid var(--contrast);"></div> <div class="endplot" id="destination2"></div>`; 
+  endPanel.innerHTML = `<div class="endexplain">r² = 1 - </div> <div class="endplot" id="destination1" style="border-bottom: 4px solid var(--contrast);"></div> <div class="endplot" id="destination2"></div><div class="summary">
+  R² = 1 - (Variance of residuals)/(variance of y values) = 1 - (SD of residuals)²/(SD of y values)² = 1 - (${(sdResiduals*sdResiduals).toFixed(2)})/(${(sdY*sdY).toFixed(2)}) = 1 - ${(sdResiduals*sdResiduals/(sdY*sdY)).toFixed(2)}  = ${(1-(sdResiduals*sdResiduals/(sdY*sdY))).toFixed(2)}
+  </div>`; 
 
 
   let destination1 = document.getElementById("destination1");
@@ -1127,11 +1308,11 @@ async function shrinkPlots(){
 
   startTransRes = reshist.style.transform;
   startTransHist = histplot.style.transform;
-  let initDiffx = destination1.getBoundingClientRect().left+destination1.getBoundingClientRect().width*1.87-histplot.getBoundingClientRect().left;
-  let initDiffy = destination1.getBoundingClientRect().top*0.75-histplot.getBoundingClientRect().top;
+  let initDiffx = destination1.getBoundingClientRect().left+destination1.getBoundingClientRect().width*1.12-histplot.getBoundingClientRect().left;
+  let initDiffy = -destination1.getBoundingClientRect().height*0.25+histplot.getBoundingClientRect().top;
 
-  let initDiffx1 = destination2.getBoundingClientRect().left-destination2.getBoundingClientRect().width*2.18-reshist.getBoundingClientRect().left;
-  let initDiffy1 = destination2.getBoundingClientRect().top*-1.05-destination2.getBoundingClientRect().height-reshist.getBoundingClientRect().top;
+  let initDiffx1 = destination2.getBoundingClientRect().left-destination2.getBoundingClientRect().width*2.45-reshist.getBoundingClientRect().left;
+  let initDiffy1 = destination2.getBoundingClientRect().top*-0.75-destination2.getBoundingClientRect().height-reshist.getBoundingClientRect().top;
 
 
   console.log(initDiffx, initDiffy, initDiffx1, initDiffy1);
@@ -1156,6 +1337,40 @@ async function shrinkPlots(){
     await sleep();
     i += 1;
   }
+
+}
+
+
+function calcStats(){
+  sdResiduals = getStandardDeviation(residualArr);
+  meanResiduals = residualArr.reduce((a, b) => a + b) / pointsarr.length;
+
+
+  let yArr = [];
+
+  for (el of pointsarr){
+    yArr.push(el[1]);
+  }
+
+  sdY = getStandardDeviation(yArr);
+  meanY = yArr.reduce((a, b) => a + b) / pointsarr.length;
+
+}
+
+
+function squarePlots(){
+
+  let scaledSdRes = sdResiduals/tickYincrement*10;
+  let scaledMeanRes = meanResiduals/tickYincrement*10;
+  let scaledSdY = sdY/tickYincrement*10;
+  let scaledMeanY = meanY/tickYincrement*10;
+
+
+  reshist.innerHTML += `          <div id="varianceBox2" class="varianceBox" style="top: ${(scaledMeanRes-scaledSdRes/2+50)}%; width: ${scaledSdRes}%; height: ${scaledSdRes}%;"></div>`
+
+  histplot.innerHTML += `          <div id="varianceBox" class="varianceBox" style="bottom: ${scaledMeanY-scaledSdY/2}%; width: ${scaledSdY}%; height: ${scaledSdY}%;"></div>`
+
+
 
 }
 
@@ -1435,6 +1650,10 @@ window.addEventListener("keydown", (event) => {
   }
 
   let actkey = event.code.replace("Key","");
+
+  if (actkey == "Space"){
+    nextAction();
+  }
 
   keyArr.push(actkey);
   keyArr.shift();

@@ -35,12 +35,12 @@ button {
 }
 
 .fullwidth{
-  width: 150%;
+  width: 200%;
   text-align: center;
 }
 
 .halfwidth {
-  width: 33%;
+  width: 25%;
   float: left;
 }
 
@@ -302,8 +302,9 @@ tr {
 
 .residualHistogram {
   margin: 5%;
+  margin-top: 13.75%;
   width: 70%;
-  aspect-ratio: 1/1.414;
+  aspect-ratio: 1/1;
   border-left: 5px solid var(--contrast);
   transform: translateY(-12.5%) rotate(0.00001deg);
 }
@@ -326,7 +327,6 @@ tr {
   opacity: 0;
   z-index: 1000;
   transition: opacity 0.25s, display 0s, top 0.25s, background-color 0.25s;
-  padding-bottom: 10px;
 }
 
 .close {
@@ -334,21 +334,15 @@ tr {
   margin-left: 40%;
   background: var(--bg);
   color: var(--contrast);
-  border: 4px solid var(--main);
-  border-radius: 5px;
+  border: 5px solid var(--main);
   font-size: 20px;
-  transition: background-color 0.25s;
   cursor: pointer;
-}
-
-.close:hover {
-  background-color: var(--slight);
 }
 
 .exit-modal {
   all: unset;
   cursor: pointer;
-  position: absolute;
+  position: fixed;
   color: var(--contrast);
   bottom: 0;
   right: 15px;
@@ -374,7 +368,6 @@ tr {
 
 .xyCol {
   border: 1px solid white;
-  /*border: 1px solid var(--bg);*/
 }
 
 /* totally not copied over from w3 lmfao */
@@ -458,7 +451,7 @@ input:checked + .slider:before {
   margin: 1.5%;
   height: 150px;
   background-color: var(--bgslight);
-  border-radius: 15px;
+  border-radius: 25px;
   cursor: pointer;
   opacity: 0.8;
   font-size: 37%;
@@ -490,8 +483,8 @@ input:checked + .slider:before {
 }
 
 .endplot {
-  width: 33%;
-  margin-left: 33%;
+  width: 25%;
+  margin-left: 12.5%;
   aspect-ratio: 3 / 2;
 /*  background-color: rgba(255, 255, 0, 0.2);*/ /* looks a bit cheap imo 8*/
 }
@@ -536,11 +529,50 @@ input:checked + .slider:before {
   color: var(--main);
 }
 
-#pointgraph {
-  margin-bottom: 0;
+.residualLine {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 0%;
+  height: 0%;
+  border-right: 2px dashed rgb(0,200,0);
+  z-index: -2;
 }
 
-#bfequation {
-  position: absolute; 
-  transform: translateX(-50%);
+.varianceBox {
+  position: absolute;
+  aspect-ratio: 1/1;
+  bottom: 0px;
+  left: 0px;
+  width: 0%;
+  height: 0%;
+  border: 6px solid red;
+}
+
+
+.realres {
+  margin: 5%;
+  width: 70%;
+  aspect-ratio: 1/1;
+  border-left: 5px solid var(--contrast);
+  transform: rotate(0.00001deg);
+}
+
+.middleBox {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 50%;
+  border-top: 5px solid var(--contrast);
+}
+
+.summary {
+  width: 50%;
+  height: 40%;
+  position: absolute;
+  top: 60%;
+  left: 0px;
+  color: var(--contrast);
+  font: 20px;
 }

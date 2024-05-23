@@ -51,12 +51,16 @@
       </div>
 
       <div class=halfwidth id="middledisplay">
-        <div id="pglabel">
-          <h1 id="pointgraph">Point graph</h1>
-          <span class="bfequation" id="bfequation"></span>
-        </div>
+        <h1 id="pglabel">Point graph <span class="bfequation" id="bfequation"></span></h1>
         <div class='plotgraph' id="plotgraph">
           <div id="tickedBox" class="tickedBox"></div>
+        </div>
+      </div>
+
+      <div class=halfwidth id="resdisp">
+        <h1 id="pglabel">Residual Plot</h1>
+        <div class='realres' id="realres">
+          <div id="middleBox" class="middleBox"></div>
         </div>
       </div>
 
@@ -111,7 +115,7 @@
     </div>
 
 
-    <div class="largenotif" id="music" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+    <div class="largenotif" id="music" style="top: 100%; opacity: 0; height: 70%; overflow: scroll; margin-bottom: 50px; border-radius: 10px;">
       <button class="exit-modal nohover" onclick="closeel('music');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>Iams Music</h1>
       <h5 style='font-size: 20px; margin: 10px;'>Listen to high quality Iams Music as you do your homework</h5>
