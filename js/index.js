@@ -1343,7 +1343,7 @@ async function shrinkPlots(){
   endPanel.innerHTML = `<div class="endexplain">R² = 1 - </div> <div class="endplot" id="destination1" style="border-bottom: 4px solid var(--contrast);"></div> <div class="endplot" id="destination2"></div><div class="summary">
   
   R² is the variability in y-values explained by the variability in x-values. The residuals represent the variability in y-values that is not explained by variability in x-values.
-  Therefore, the variance of the residuals over the variance of the y values represents the proportion of the variability in y-values that is not explained by the variability in x-values.
+  The variance of the residuals over the variance of the y values represents the proportion of the variability in y-values that is not explained by the variability in x-values.
   1 - this value leads to R².
 
   <br>
@@ -1599,7 +1599,7 @@ function usePreloadedData(data){
 }
 
 
-function useSavedData(dataX, dataY){
+async function useSavedData(dataX, dataY){
 
   pointsarr = [];
   tickXincrement = 1;
@@ -1621,6 +1621,8 @@ function useSavedData(dataX, dataY){
 
   saveData();
 
+  closeel("loading");
+  
   console.log(pointsarr);
 }
 
@@ -1820,6 +1822,7 @@ if (ur.includes("?")){
   ur = splt[0];
   splt = splt[1].split("&");
 
+
   openel("loading");
 
   if (window.confirm("Using this dataset will erase your current data. Do you want to continue?")) {
@@ -1837,10 +1840,12 @@ if (ur.includes("?")){
 
   window.open(ur,"_self");
 } else {
+
   if (loadX == null || loadX == "" || loadX == NaN){
     pointsarr = [];
     redraw();
   } else if (loadX != null && loadY != null){
+
 
     if (loadX.substring(loadX.length-1,loadX.length) == ","){
       loadX = loadX.substring(0, loadX.length-1);
