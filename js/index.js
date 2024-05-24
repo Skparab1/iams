@@ -393,7 +393,7 @@ function redraw(pointgrow = null){
     <tr>
       <th><h1 class="pointInput xyCol">X</h1></th>
       <th><h1 class="pointInput xyCol">Y</h1></th>
-      <td onclick="deleteAll();" style="border-radius: 0px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%;">Delete All</p></td>
+      <td onclick="deleteAll();" style="border-radius: 0px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%; color: var(--contrast);">Delete All</p></td>
     </tr>
   </tr>`;
 
@@ -1756,8 +1756,13 @@ function saveData(){
     i += 1;
   }
 
-  stringX = stringX.substring(0, stringX.length-1);
-  stringY = stringY.substring(0, stringY.length-1);
+  if (stringX.substring(stringX.length-1, stringX.length) == ","){
+    stringX = stringX.substring(0, stringX.length-1);
+  }
+
+  if (stringY.substring(stringY.length-1, stringY.length) == ","){
+    stringY = stringY.substring(0, stringY.length-1);
+  }
 
   localStorage.setItem("IamsPointsX",stringX);
   localStorage.setItem("IamsPointsY",stringY);
@@ -1832,7 +1837,18 @@ if (ur.includes("?")){
 
   window.open(ur,"_self");
 } else {
-  if (loadX != null && loadY != null){
+  if (loadX == null || loadX == "" || loadX == NaN){
+    pointsarr = [];
+    redraw();
+  } else if (loadX != null && loadY != null){
+
+    if (loadX.substring(loadX.length-1,loadX.length) == ","){
+      loadX = loadX.substring(0, loadX.length-1);
+    }
+    if (loadY.substring(loadY.length-1,loadY.length) == ","){
+      loadY = loadY.substring(0, loadY.length-1);
+    }
+
     loadX = loadX.split(",");
     loadY = loadY.split(",");
   

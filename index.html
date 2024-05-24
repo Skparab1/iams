@@ -100,6 +100,7 @@
       <h5 style='font-size: 20px; margin: 10px;'>1. Click the graph or add points to the table to create data. Alternatively, use preloaded data or samples.</h5>
       <h5 style='font-size: 20px; margin: 10px;'>2. Modify points using the table or delete points by clicking them.</h5>
       <h5 style='font-size: 20px; margin: 10px;'>3. Click the next button to view steps of the animation.</h5>
+      <h5 style='font-size: 20px; margin: 10px;'>3. Click share data to get a URL for your data.</h5>
       <div class="close" onclick="closeel('instructions'); closescreen();">Close</div>
     </div>
 
@@ -107,7 +108,6 @@
     <div class="largenotif" id="preloadedSelect" style="padding: 1.5%; top: 100%; opacity: 0; height: 60%; margin-bottom: 50px; overflow-y: scroll;">
       <button class="exit-modal nohover" onclick="closeel('preloadedSelect');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>Select Preloaded Data</h1>
-      
     </div>
 
 
@@ -120,11 +120,13 @@
       <button class="exit-modal nohover" onclick="closeel('shareData');">&times</button>
       <h1 style='font-size: 25px; margin: 10px;'>Share this link to transfer your data!</h1>
       <h1 id="shareLink" style='font-size: 20px; margin: 10px;'></h1>
+      <div class="close" onclick="closeel('shareData'); closescreen();">Close</div>
     </div>
     
     <div class="largenotif" id="loading" style="padding: 1.5%; top: 100%; opacity: 0; height: auto; margin-bottom: 50px; overflow-y: scroll;">
       <h1 style='font-size: 25px; margin: 10px;'>Loading...</h1>
       <h1 style='font-size: 20px; margin: 10px;'>This should only take a few seconds</h1>
+      <div class="close" onclick="location.reload();">Try again</div>
     </div>
 
     <div class="largenotif" id="music" style="top: 100%; opacity: 0; height: 70%; overflow: scroll; margin-bottom: 50px; border-radius: 10px;">
