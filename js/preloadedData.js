@@ -28,11 +28,10 @@ const CorrelationRegressionReview = {
 
 const pg675p14 = {
   name: "Page 675, Problem 14",
-  img: "Review.png",
+  img: "pg675p14.png",
   x: [ 1,     1,     3,     4,    4,     5,    5,    6,    7,    7,    8,    8,    10,   10,   13],
   y: [ 13990, 13495, 12999, 9500, 10495, 8995, 9495, 6999, 6950, 7850, 5999, 5995, 4950, 4495, 2850]
 };
-
 
 
 const allPreloaded = [pg168p33, pg168p34, pg169p35, CorrelationRegressionReview, pg675p14];

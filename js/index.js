@@ -31,6 +31,7 @@ let step = 1;
 let bestFitSlope = 0;
 
 let plotActive = true;
+let leftArrowReserved = false;
 
 // and i will proceed to use var ahem ritam
 var allowClick = true;
@@ -379,6 +380,14 @@ function allowPointClick(){
 }
 
 
+function reserveLeftArrow(){
+  leftArrowReserved = true;
+}
+
+function unreserveLeftArrow(){
+  leftArrowReserved = false;
+}
+
 
 function redraw(pointgrow = null){
 
@@ -391,8 +400,8 @@ function redraw(pointgrow = null){
   xytable.innerHTML = `
   <tr>
     <tr>
-      <th><h1 class="pointInput xyCol">X</h1></th>
-      <th><h1 class="pointInput xyCol">Y</h1></th>
+      <th><h1 onfocus="reserveLeftArrow();" onfocusout="unreserveLeftArrow();" class="pointInput xyCol">X</h1></th>
+      <th><h1 onfocus="reserveLeftArrow();" onfocusout="unreserveLeftArrow();" class="pointInput xyCol">Y</h1></th>
       <td onclick="deleteAll();" style="border-radius: 0px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%; color: var(--contrast);">Delete All</p></td>
     </tr>
   </tr>`;
@@ -609,8 +618,8 @@ function addToTable(x,y,index){
 
   xytable.innerHTML += `
     <tr id="tableRow${idx}" onmouseover="glowPoint(${idx});" onmouseout="revertPoint(${idx});">
-      <td><input class="pointInput" type="number" step="0.01" name="" id="X${idx}" value="${x.toFixed(2)}" onchange="lastfocus = 'X${idx}'; monitorChange(${idx});"></td>
-      <td><input class="pointInput" type="number" step="0.01" name="" id="Y${idx}" value="${y.toFixed(2)}" onchange="lastfocus = 'Y${idx}'; monitorChange(${idx});"></td>
+      <td><input class="pointInput" onfocus="reserveLeftArrow();" onfocusout="unreserveLeftArrow();" type="number" step="0.01" name="" id="X${idx}" value="${x.toFixed(2)}" onchange="lastfocus = 'X${idx}'; monitorChange(${idx});"></td>
+      <td><input class="pointInput" onfocus="reserveLeftArrow();" onfocusout="unreserveLeftArrow();" type="number" step="0.01" name="" id="Y${idx}" value="${y.toFixed(2)}" onchange="lastfocus = 'Y${idx}'; monitorChange(${idx});"></td>
       <td onclick="deletePoint(${idx});" style="border-radius: 25px;"><p style="margin: 0px; padding: 0px; padding-left: 10px; padding-right: 10px; cursor: pointer; border-radius: 25px; font-size: 75%; color: var(--contrast);">delete</p></td>
     </tr>`
 
@@ -880,8 +889,7 @@ function nextAction(){
     shiftPanels();
   } else if (step == 8){
     shrinkPlots();
-  } else if (step == 9){
-    squarePlots();
+    document.getElementById("controlPanel").style.display = "none";
   }
   step += 1;
 }
@@ -1457,7 +1465,7 @@ async function squarePlots(){
 
   reshist.innerHTML += `          <div id="varianceBox2" class="varianceBox" style="top: ${(scaledMeanRes-scaledSdRes/2+50)}%; width: ${scaledSdRes}%; height: ${scaledSdRes}%;"></div>`
 
-  histplot.innerHTML += `          <div id="varianceBox" class="varianceBox" style="bottom: ${scaledMeanY-scaledSdY/2}%; width: ${scaledSdY}%; height: ${scaledSdY}%;"></div>`
+  histplot.innerHTML += `          <div id="varianceBox" class="varianceBox" style="border-color: rgb(0, 174, 255); bottom: ${scaledMeanY-scaledSdY/2}%; width: ${scaledSdY}%; height: ${scaledSdY}%;"></div>`
 
 
 
@@ -1902,6 +1910,17 @@ displayPreloaded();
 displaySamples();
 
 
+(async () => {
+  fetch((`https://skparabapi-1-x8164494.deta.app/increment?key=iamsrsquared`))
+    .then(response => {
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+})();
+
+
 window.addEventListener("resize", redraw);
 plotgraph.addEventListener("click", addpoint);
 plotgraph.addEventListener("mousemove", allowPointClick);
@@ -1914,7 +1933,7 @@ window.addEventListener("keydown", (event) => {
 
   let actkey = event.code.replace("Key","");
 
-  if (actkey == "Space"){
+  if (actkey == "ArrowRight" && !leftArrowReserved){
     nextAction();
   }
 

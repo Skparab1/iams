@@ -3,13 +3,12 @@
   <head>
     <meta charset='utf-8'>
     <meta name='og:viewport' content='width=device-width,initial-scale=1'>
-    <meta name="og:description" content="OUND">
+    <meta name="og:description" content="Iams">
     <meta property="og:image" content="image">
     <title>Iams</title>
     <link rel="stylesheet" href="css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/x-icon" href="pacman-favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
 
@@ -26,6 +25,7 @@
         <li><a class="larget" onclick="openel('preloadedSelect');">Preloaded Data</a></li>
         <li><a class="larget" onclick="openel('testSelect');">Test Samples</a></li>
         <li><a class="larget" onclick="createShareLink(); openel('shareData');">Share Data</a></li>
+        <li><a class="larget" onclick="deleteAll();">Reset</a></li>
       </ul> 
       <ul class="nav-items navright">
         <li title="Settings"><a onclick="openel('preferences');"><img src="assets/settings.png" height="30px" class="logo"></a></li>
@@ -73,7 +73,7 @@
           <input type="range" min="1" max="100" value="50" class="slider" id="myRange" style="transform: rotate(90deg);">
         </div>
       </div> -->
-    <div class="controlPanel" onclick="nextAction();">
+    <div id="controlPanel" class="controlPanel" onclick="nextAction();">
       <div class="goarrow">
         <h3 style="display:table-cell; vertical-align:middle">Next &#8594;</h3>
       </div>
