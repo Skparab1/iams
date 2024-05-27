@@ -309,11 +309,11 @@ function drawResid(x, y, num){
   let offset;
 
   if (resid >= 0){
-    offset = ySolution(pointsarr[num][0])/tickYincrement*10-1+"%";
+    offset = ySolution(pointsarr[num][0])/tickYincrement*10+"%";
   } else {
     storeh = -storeh;
 
-    offset = pointsarr[num][1]/tickYincrement*10-1+"%";
+    offset = pointsarr[num][1]/tickYincrement*10+"%";
   }
 
   storeh = storeh + "%";
@@ -349,11 +349,11 @@ async function drawResidReal(num){
   let offset;
 
   if (resid >= 0){
-    offset = 50-2+"%";
+    offset = 50-1+"%";
   } else {
 
     storeh = -storeh;
-    offset = 50-2+resid/tickYincrement*10+"%";
+    offset = 50+resid/tickYincrement*10+"%";
   }
 
   storeh = storeh + "%";
