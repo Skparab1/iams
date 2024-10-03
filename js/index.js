@@ -1149,13 +1149,14 @@ function drawResidualHistogram(anim=true){
 
     // let percentTop = (actualTop-reshist.offsetTop+reshist.offsetHeight*0.125)/reshist.offsetHeight;
 
-    let i = 0;
-    while (i < 10){
+    let i = 0; //-5;
+    while (i < 10){ //15){
       // determine if this is the correct level for it
 
       let checklevel = -(i-5)*tickYincrement;
+      // let checklevelend = -(i-5+1)*tickYincrement;
 
-      if (residualArr[pointNum] > checklevel){
+      if (residualArr[pointNum] > checklevel){ //&& residualArr[pointNum] < checklevelend){
         let endPos = [(window.innerWidth*0.02*catPoints[i]+reshist.offsetWidth*0.05), reshist.offsetHeight*((i-0.5)/10)];
         catPoints[i] += 1;
 
@@ -1812,7 +1813,19 @@ function createShareLink(){
   lnk = window.location.href + "?X=" + stringX + "&Y=" + stringY;
 
   sl.textContent = lnk;
+
+  document.getElementById("copyl").textContent = "Copy Link to Clipboard";
+
 }
+
+function copyl(){
+  let l = document.getElementById("shareLink").textContent;
+  
+  navigator.clipboard.writeText(l);
+
+  document.getElementById("copyl").textContent = "Link copied!";
+}
+
 
 // load the settings from localstorage
 let theme = localStorage.getItem('bttheme');
